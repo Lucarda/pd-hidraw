@@ -1,2 +1,6 @@
 #N canvas 235 158 450 300 12;
 #X obj 140 122 hidraw;
+#X obj 149 182 print;
+#X msg 211 78 version;
+#X connect 0 0 1 0;
+#X connect 2 0 0 0;
