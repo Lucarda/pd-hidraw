@@ -96,11 +96,11 @@ void hidraw_main(t_hidraw *x) {
 	buf[0] = 0x01;
 	buf[1] = 0x81;
 
-
+/*
 	// Open the device using the VID, PID,
 	// and optionally the Serial number.
 	////handle = hid_open(0x4d8, 0x3f, L"12345");
-	handle = hid_open(0x_10C4, 0x_8108, NULL);         ////////////we cant open mouse or keyboard on Windows. Security stuff.
+	handle = hid_open(0x1c4f, 0x0003, NULL);         ////////////we cant open mouse or keyboard on Windows. Security stuff.
 	if (!handle) {
 		printf("unable to open device\n");
  		//return 1;
@@ -133,7 +133,7 @@ void hidraw_main(t_hidraw *x) {
 		}
 
 		i++;
-		if (i >= 10) { /* 10 tries by 500 ms - 5 seconds of waiting*/
+		if (i >= 10) { // 10 tries by 500 ms - 5 seconds of waiting
 			printf("read() timeout\n");
 			break;
 		}
@@ -156,12 +156,12 @@ void hidraw_main(t_hidraw *x) {
 
 
 	
+*/	
 	
 	
 	
 	
-	
-	
+
 	
 	
 	hid_close(handle);

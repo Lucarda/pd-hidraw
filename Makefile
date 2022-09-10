@@ -10,11 +10,17 @@ cflags = ${XINCLUDE} -I . -DHAVE_CONFIG_H
 
 hidraw.class.sources = \
 	pd-hidraw.c \
-	${SOURCE_DIR}/windows/hid.c
+	
 
-
+define forLinux
+  hidraw.class.sources += ${SOURCE_DIR}/linux/hid.c
+  XINCLUDE += \
+    ${empty}
+  ldlibs += -ludev -lrt
+endef
 
 define forWindows
+  hidraw.class.sources += ${SOURCE_DIR}/windows/hid.c
   XINCLUDE += \
     -I ${SOURCE_DIR}/windows
     ${empty}
