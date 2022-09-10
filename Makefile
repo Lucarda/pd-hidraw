@@ -1,13 +1,16 @@
 # library name
 lib.name = hidraw
 
+SOURCE_DIR = ./hidapi
 
+XINCLUDE = -I ${SOURCE_DIR}/hidapi \
 
+cflags = ${XINCLUDE} -I . -DHAVE_CONFIG_H
 
 
 hidraw.class.sources = \
 	pd-hidraw.c \
-
+	${SOURCE_DIR}/windows/hid.c
 
 
 

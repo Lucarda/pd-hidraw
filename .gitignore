@@ -1,0 +1,11 @@
+*.o
+*.pd_linux
+*.pd_darwin
+*.dll
+*.m_amd64
+*.m_i386
+*.l_amd64
+*.l_i386
+*.d_amd64
+*.d_i386
+*.d_am64
