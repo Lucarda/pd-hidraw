@@ -3,7 +3,7 @@ lib.name = hidraw
 
 SOURCE_DIR = ./hidapi
 
-XINCLUDE = -I ${SOURCE_DIR}/hidapi \
+XINCLUDE = -I ${SOURCE_DIR}/hidapi 
 
 cflags = ${XINCLUDE} -I . -DHAVE_CONFIG_H
 
@@ -14,7 +14,18 @@ hidraw.class.sources = \
 
 
 
+define forWindows
+  XINCLUDE += \
+    -I ${SOURCE_DIR}/windows
+    ${empty}
+  ldlibs += -mwindows
+endef
 
+define forDarwin
+  XINCLUDE += \
+    -I ${SOURCE_DIR}/mac
+    ${empty}
+endef
 
 datafiles = \
 
