@@ -104,13 +104,12 @@ static void hidraw_main(t_hidraw *x) {
 	////handle = hid_open(0x4d8, 0x3f, L"12345");
 	//handle = hid_open(0x1c4f, 0x0003, NULL);         ////////////we cant open mouse or keyboard on Windows. Security stuff.
 	
-	x->handle = hid_open_path("/dev/hidraw2");
+	x->handle = hid_open_path("/dev/hidraw3");
 	
 	if (!x->handle) {
 		printf("unable to open device\n");
  		return;
 	}
-	
 	
 
 	// Set the hid_read() function to be non-blocking.
@@ -121,7 +120,8 @@ static void hidraw_main(t_hidraw *x) {
 	// Request state (cmd 0x81). The first byte is the report number (0x1).
 	buf[0] = 0x1;
 	buf[1] = 0x81;
-	hid_write(x->handle, buf, 17);
+	res = hid_write(x->handle, buf, 3);
+	printf("res write: %d\n", res);
 	if (res < 0) {
 		printf("Unable to write()/2: %ls\n", hid_error(x->handle));
 	}
@@ -135,6 +135,7 @@ static void hidraw_main(t_hidraw *x) {
 	i = 0;
 	while (res == 0) {
 		res = hid_read(x->handle, buf, sizeof(buf));
+		
 		if (res == 0) {
 			printf("waiting...\n");
 		}
