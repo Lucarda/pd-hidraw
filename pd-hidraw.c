@@ -96,14 +96,17 @@ void hidraw_main(t_hidraw *x) {
 	buf[0] = 0x01;
 	buf[1] = 0x81;
 
-/*
+
 	// Open the device using the VID, PID,
 	// and optionally the Serial number.
 	////handle = hid_open(0x4d8, 0x3f, L"12345");
-	handle = hid_open(0x1c4f, 0x0003, NULL);         ////////////we cant open mouse or keyboard on Windows. Security stuff.
+	//handle = hid_open(0x1c4f, 0x0003, NULL);         ////////////we cant open mouse or keyboard on Windows. Security stuff.
+	
+	handle = hid_open_path("/dev/hidraw2");
+	
 	if (!handle) {
 		printf("unable to open device\n");
- 		//return 1;
+ 		return 1;
 	}
 
 	// Set the hid_read() function to be non-blocking.
@@ -137,14 +140,20 @@ void hidraw_main(t_hidraw *x) {
 			printf("read() timeout\n");
 			break;
 		}
-
+/*
 #ifdef _WIN32
 		Sleep(500);
 #else
 		usleep(500*1000);
-#endif
+#endif */
 	}
 
+
+    //while(1)
+    //{
+		
+		usleep(500*1000);
+		
 	if (res > 0) {
 		printf("Data read:\n   ");
 		// Print out the returned buffer.
@@ -152,11 +161,11 @@ void hidraw_main(t_hidraw *x) {
 			printf("%02x ", (unsigned int) buf[i]);
 		printf("\n");
 	}
-
+    //}
 
 
 	
-*/	
+	
 	
 	
 	
