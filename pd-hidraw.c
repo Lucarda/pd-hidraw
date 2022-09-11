@@ -39,6 +39,8 @@
 
 typedef struct _hidraw {
   t_object  x_obj;
+  struct hid_device_info *devs;
+  hid_device *handle;
   t_canvas  *x_canvas;
   t_outlet *x_outlet1;
    
@@ -65,16 +67,16 @@ void print_devices(struct hid_device_info *cur_dev) {
 	}
 }
 
-void hidraw_main(t_hidraw *x) {
+static void hidraw_main(t_hidraw *x) {
 
 	int res;
 	unsigned char buf[256];
 	#define MAX_STR 255
 	wchar_t wstr[MAX_STR];
-	hid_device *handle;
+	
 	int i;
 
-	struct hid_device_info *devs;
+	
 
     hid_init();
 
@@ -84,9 +86,9 @@ void hidraw_main(t_hidraw *x) {
 	hid_darwin_set_open_exclusive(0);
 #endif	
 
-    devs = hid_enumerate(0x0, 0x0);
-	print_devices(devs);
-	hid_free_enumeration(devs);
+    x->devs = hid_enumerate(0x0, 0x0);
+	print_devices(x->devs);
+	hid_free_enumeration(x->devs);
 	
 	
 ///////////////////////////////	
@@ -102,23 +104,29 @@ void hidraw_main(t_hidraw *x) {
 	////handle = hid_open(0x4d8, 0x3f, L"12345");
 	//handle = hid_open(0x1c4f, 0x0003, NULL);         ////////////we cant open mouse or keyboard on Windows. Security stuff.
 	
-	handle = hid_open_path("/dev/hidraw2");
+	x->handle = hid_open_path("/dev/hidraw2");
 	
-	if (!handle) {
+	if (!x->handle) {
 		printf("unable to open device\n");
- 		return 1;
+ 		return;
 	}
+	
+	
 
 	// Set the hid_read() function to be non-blocking.
-	hid_set_nonblocking(handle, 1);
+	hid_set_nonblocking(x->handle, 1);
+	
+	
 	
 	// Request state (cmd 0x81). The first byte is the report number (0x1).
 	buf[0] = 0x1;
 	buf[1] = 0x81;
-	hid_write(handle, buf, 17);
+	hid_write(x->handle, buf, 17);
 	if (res < 0) {
-		printf("Unable to write()/2: %ls\n", hid_error(handle));
+		printf("Unable to write()/2: %ls\n", hid_error(x->handle));
 	}
+	
+	
 
 	// Read requested state. hid_read() has been set to be
 	// non-blocking by the call to hid_set_nonblocking() above.
@@ -126,33 +134,23 @@ void hidraw_main(t_hidraw *x) {
 	res = 0;
 	i = 0;
 	while (res == 0) {
-		res = hid_read(handle, buf, sizeof(buf));
+		res = hid_read(x->handle, buf, sizeof(buf));
 		if (res == 0) {
 			printf("waiting...\n");
 		}
 		if (res < 0) {
-			printf("Unable to read(): %ls\n", hid_error(handle));
+			printf("Unable to read(): %ls\n", hid_error(x->handle));
 			break;
 		}
 
 		i++;
+		
+		
 		if (i >= 10) { // 10 tries by 500 ms - 5 seconds of waiting
 			printf("read() timeout\n");
 			break;
 		}
-/*
-#ifdef _WIN32
-		Sleep(500);
-#else
-		usleep(500*1000);
-#endif */
-	}
-
-
-    //while(1)
-    //{
-		
-		usleep(500*1000);
+        
 		
 	if (res > 0) {
 		printf("Data read:\n   ");
@@ -161,7 +159,7 @@ void hidraw_main(t_hidraw *x) {
 			printf("%02x ", (unsigned int) buf[i]);
 		printf("\n");
 	}
-    //}
+  }
 
 
 	
@@ -173,7 +171,7 @@ void hidraw_main(t_hidraw *x) {
 
 	
 	
-	hid_close(handle);
+	hid_close(x->handle);
 
 	/* Free static HIDAPI objects. */
 	hid_exit();
