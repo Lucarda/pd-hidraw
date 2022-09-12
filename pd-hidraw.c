@@ -153,13 +153,35 @@ static void hidraw_main(t_hidraw *x) {
 	// Request state (cmd 0x81). The first byte is the report number (0x1).
 	buf[0] = 0x1;
 	buf[1] = 0x81;
-	res = hid_write(x->handle, buf, 3);
-	printf("res write: %d\n", res);
+	
+	
+	
+	
+	
+	// Send a Feature Report to the device
+	buf[0] = 0x0;
+	buf[1] = 0x0;
+	buf[2] = 0x0;
+	buf[3] = 0x0;
+	buf[4] = 0x0;
+	res = hid_send_feature_report(x->handle, buf, 64);
+	
+	
+	printf("feature?: %d ",res);
 	if (res < 0) {
 		printf("Unable to write()/2: %ls\n", hid_error(x->handle));
 	}
 	
 	
+	/*
+	
+	//res = hid_write(x->handle, buf, 3);
+	printf("res write: %d\n", res);
+	if (res < 0) {
+		printf("Unable to write()/2: %ls\n", hid_error(x->handle));
+	}
+	
+	*/
 
 	// Read requested state. hid_read() has been set to be
 	// non-blocking by the call to hid_set_nonblocking() above.
