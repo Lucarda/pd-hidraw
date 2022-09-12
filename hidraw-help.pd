@@ -1,17 +1,19 @@
 #N canvas 424 160 450 300 12;
 #X obj 150 209 hidraw;
-#X obj 126 257 print;
-#X msg 174 48 version;
-#X msg 188 98 test;
-#X msg 266 84 openhid \$1;
-#X obj 266 63 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#X obj 150 254 print;
+#X msg 160 48 version;
+#X msg 171 72 test;
+#X msg 305 69 openhid \$1;
+#X obj 305 48 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
-#X msg 157 8 listdevices;
-#X msg 269 169 closehid;
+#X msg 150 25 listdevices;
+#X msg 304 97 closehid;
+#X obj 150 99 t a;
 #X connect 0 0 1 0;
-#X connect 2 0 0 0;
-#X connect 3 0 0 0;
+#X connect 2 0 8 0;
+#X connect 3 0 8 0;
 #X connect 4 0 0 0;
 #X connect 5 0 4 0;
-#X connect 6 0 0 0;
+#X connect 6 0 8 0;
 #X connect 7 0 0 0;
+#X connect 8 0 0 0;
