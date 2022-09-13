@@ -3,7 +3,7 @@
 #X msg 87 186 openhid \$1;
 #X obj 87 165 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
-#X msg 49 112 listdevices;
+#X msg 36 105 listdevices;
 #X msg 117 224 closehid;
 #X obj 300 188 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
@@ -11,9 +11,6 @@
 #X obj 321 188 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
 #X obj 322 215 metro 2;
-#X obj 456 394 dac~;
-#X obj 462 331 osc~ 440;
-#X obj 462 355 *~ 0.2;
 #X floatatom 368 188 5 0 0 0 - - - 0;
 #X obj 409 214 bang~;
 #X obj 68 493 unpack 0 0 0 0 0 0 0 0, f 55;
@@ -55,49 +52,67 @@
 #X obj 395 522 change;
 #X obj 448 522 change;
 #X obj 86 372 list prepend 0;
-#X text 149 112 <-- first this. it will give the "Pd device enum" to
-use with "openhid".;
 #X text 327 159 --- poll ---;
-#X text 44 21 [hidraw] most likely wont let you read from a mouse or
-keyboard as this is a security issue for most OSs. it is supposed to
-work with HID compatible devices like joysticks \, etc., f 71;
 #X text 457 212 <-- If DSP is on poll on each audio block, f 22;
 #X obj 392 250 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #X obj 181 345 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
-#X connect 0 0 33 0;
+#X text 136 105 <-- first this. it will give the "Pd device enum" to
+use with "openhid" \, (scroll the console).;
+#N canvas 156 156 563 451 hid-permissions 0;
+#X obj 63 61 inlet;
+#X obj 107 361 pdcontrol;
+#X msg 60 127 browse https://www.google.com/search?q=linux+hid+permissions
+;
+#X msg 88 191 browse https://www.google.com/search?q=macos+hid+permissions
+;
+#X obj 166 56 inlet;
+#X connect 0 0 2 0;
+#X connect 2 0 1 0;
+#X connect 3 0 1 0;
+#X connect 4 0 3 0;
+#X restore 348 388 pd hid-permissions;
+#X obj 348 345 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X text 489 345 macOS;
+#X text 369 343 Linux;
+#X obj 470 349 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#000000 #000000;
+#X text 44 21 [hidraw] most likely wont let you read from a mouse or
+keyboard as this is a security issue for most OSs. it is supposed to
+work with HID compatible devices like joysticks \, etc., f 71;
+#X connect 0 0 30 0;
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
 #X connect 3 0 0 0;
 #X connect 4 0 0 0;
 #X connect 5 0 0 0;
 #X connect 7 0 8 0;
-#X connect 8 0 24 0;
-#X connect 10 0 11 0;
-#X connect 11 0 9 0;
-#X connect 11 0 9 1;
-#X connect 12 0 8 1;
-#X connect 13 0 24 1;
-#X connect 14 0 25 0;
-#X connect 14 1 26 0;
-#X connect 14 2 27 0;
-#X connect 14 3 28 0;
-#X connect 14 4 29 0;
-#X connect 14 5 30 0;
-#X connect 14 6 31 0;
-#X connect 14 7 32 0;
-#X connect 23 0 14 0;
-#X connect 23 1 6 0;
-#X connect 24 0 0 0;
+#X connect 8 0 21 0;
+#X connect 9 0 8 1;
+#X connect 10 0 21 1;
+#X connect 11 0 22 0;
+#X connect 11 1 23 0;
+#X connect 11 2 24 0;
+#X connect 11 3 25 0;
+#X connect 11 4 26 0;
+#X connect 11 5 27 0;
+#X connect 11 6 28 0;
+#X connect 11 7 29 0;
+#X connect 20 0 11 0;
+#X connect 20 1 6 0;
+#X connect 21 0 0 0;
+#X connect 22 0 12 0;
+#X connect 23 0 13 0;
+#X connect 24 0 14 0;
 #X connect 25 0 15 0;
 #X connect 26 0 16 0;
 #X connect 27 0 17 0;
 #X connect 28 0 18 0;
 #X connect 29 0 19 0;
 #X connect 30 0 20 0;
-#X connect 31 0 21 0;
-#X connect 32 0 22 0;
-#X connect 33 0 23 0;
-#X connect 38 0 24 2;
-#X connect 39 0 33 1;
+#X connect 33 0 21 2;
+#X connect 34 0 30 1;
+#X connect 37 0 36 0;
+#X connect 40 0 36 1;
