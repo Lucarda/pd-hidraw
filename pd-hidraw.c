@@ -1,4 +1,6 @@
-
+/* pd-hidraw.c
+ * By Lucas Cordiviola <lucarda27@hotmail.com> 2022
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
