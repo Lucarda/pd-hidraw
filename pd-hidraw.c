@@ -36,21 +36,23 @@
 #endif
 
 #define	HIDRAW_MAJOR_VERSION 0
-#define	HIDRAW_MINOR_VERSION 0
+#define	HIDRAW_MINOR_VERSION 1
 #define	HIDRAW_BUGFIX_VERSION 0
 
 #define MAXHIDS 50
 
 typedef struct _hidraw {
-  t_object  x_obj;
-  struct hid_device_info *devs;
-  unsigned short foundPID[MAXHIDS];
-  unsigned short foundVID[MAXHIDS];
-  char currentpdhid;
-  char isadeviceopen;
-  hid_device *handle;
-  t_canvas  *x_canvas;
-  t_outlet *x_outlet1;
+    t_object  x_obj;
+    struct hid_device_info *devs;
+    unsigned short foundPID[MAXHIDS];
+    unsigned short foundVID[MAXHIDS];
+    unsigned char writebuf[256];
+    unsigned char readbuf[256];
+    char currentpdhid;
+    char isadeviceopen;
+    hid_device *handle;
+    t_canvas  *x_canvas;
+    t_outlet *x_outlet1;
    
   } t_hidraw;
 
@@ -93,13 +95,11 @@ static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
 	// and optionally the Serial number.
 	////handle = hid_open(0x4d8, 0x3f, L"12345");
 	x->handle = hid_open(x->foundVID[pdenum], x->foundPID[pdenum], NULL);
-	////////////we cant open mouse or keyboard on Windows. Security stuff.
-	
-	//x->handle = hid_open_path("\\?\HID#VID_13BA&PID_0017&MI_01&Col02#8&22796146&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030}");
 	
 	if (!x->handle) {
 		post("unable to open device %d", (int)hidn);
- 		return;
+ 		x->isadeviceopen = 0;
+		return;
 	}
 	
     x->isadeviceopen = 1;
@@ -107,6 +107,12 @@ static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
 	
 	// Set the hid_read() function to be non-blocking.
 	hid_set_nonblocking(x->handle, 1);
+	
+    // Set up buffers.
+	memset(x->writebuf,0x00,sizeof(x->writebuf));
+	memset(x->readbuf,0x00,sizeof(x->readbuf));
+	x->writebuf[0] = 0x01;
+	x->writebuf[1] = 0x81;
 	
 }
 
@@ -124,143 +130,47 @@ static void hidraw_listhids(t_hidraw *x) {
 	hid_free_enumeration(x->devs);
 }
 
-static void hidraw_main(t_hidraw *x) {
 
-	int res;
-	unsigned char buf[256];
-	#define MAX_STR 255
-	wchar_t wstr[MAX_STR];
-	
+static void hidraw_poll(t_hidraw *x) {
+
+	int res;	
 	int i;
+	t_atom out[256];
 
 	if (!x->isadeviceopen){
 		post("no device opened yet");
 	    return;
 	}
-	
-///////////////////////////////	
-	
-	// Set up the command buffer.
-	memset(buf,0x00,sizeof(buf));
-	buf[0] = 0x01;
-	buf[1] = 0x81;
-
-
-	
-	
-	
-	
-	// Request state (cmd 0x81). The first byte is the report number (0x1).
-	buf[0] = 0x1;
-	buf[1] = 0x81;
-	
-	
-	
-	
-	
-	// Send a Feature Report to the device
-	buf[0] = 0x0;
-	buf[1] = 0x0;
-	buf[2] = 0x0;
-	buf[3] = 0x0;
-	buf[4] = 0x0;
-	res = hid_send_feature_report(x->handle, buf, 64);
-	
-	
-	printf("feature?: %d ",res);
-	if (res < 0) {
-		printf("Unable to write()/2: %ls\n", hid_error(x->handle));
-	}
-	
-	
-	/*
-	
-	//res = hid_write(x->handle, buf, 3);
-	printf("res write: %d\n", res);
-	if (res < 0) {
-		printf("Unable to write()/2: %ls\n", hid_error(x->handle));
-	}
-	
-	*/
 
 	// Read requested state. hid_read() has been set to be
 	// non-blocking by the call to hid_set_nonblocking() above.
 	// This loop demonstrates the non-blocking nature of hid_read().
 	res = 0;
 	i = 0;
-	while (res == 0) {
-		res = hid_read(x->handle, buf, sizeof(buf));
-		
-		if (res == 0) {
-			printf("waiting...\n");
-		}
-		if (res < 0) {
-			printf("Unable to read(): %ls\n", hid_error(x->handle));
-			break;
-		}
 
-		i++;
-		
-		
-		if (i >= 10) { // 10 tries by 500 ms - 5 seconds of waiting
-			printf("read() timeout\n");
-			break;
-		}
-        
-		
-	if (res > 0) {
-		printf("Data read:\n   ");
-		// Print out the returned buffer.
-		for (i = 0; i < res; i++)
-			printf("%02x ", (unsigned int) buf[i]);
-		printf("\n");
-	}
-  }
+	res = hid_read(x->handle, x->readbuf, sizeof(x->readbuf));
 
-
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-
-
+	for(i=0; i < res; i++) {
+    SETFLOAT(out+i, x->readbuf[i]);
+      }
+	outlet_list(x->x_outlet1, &s_list, res, out);
 	
 }
 
-static void hidraw_pdversion(t_hidraw *x) {
+static void hidraw_pdversion(void) {
 	
-	t_atom version[8];
-	
-	
-	SETSYMBOL(&version[0], gensym("hidraw"));
-	SETFLOAT(&version[1], (t_float)HIDRAW_MAJOR_VERSION);
-	SETFLOAT(&version[2], (t_float)HIDRAW_MINOR_VERSION);
-	SETFLOAT(&version[3], (t_float)HIDRAW_BUGFIX_VERSION);
-	SETSYMBOL(&version[4], gensym("hidapi"));
-	SETFLOAT(&version[5], (t_float)HID_API_VERSION_MAJOR);
-	SETFLOAT(&version[6], (t_float)HID_API_VERSION_MINOR);
-	SETFLOAT(&version[7], (t_float)HID_API_VERSION_PATCH);
-	
-	outlet_list(x->x_outlet1, &s_list, 8, version);
-	
-	
-	int i;
-	for (i=0; i < MAXHIDS; i++) {
-		printf("%d %d\n",	 x->foundVID[i], x->foundPID[i]);
-	}
-	
+	post("---");
+	post("  hidraw v%d.%d.%d", HIDRAW_MAJOR_VERSION, HIDRAW_MINOR_VERSION, HIDRAW_BUGFIX_VERSION);
+	post("  hidapi v%d.%d.%d", HID_API_VERSION_MAJOR, HID_API_VERSION_MINOR, HID_API_VERSION_PATCH);
+	post("---");
 }
 
 static void hidraw_free(t_hidraw *x) {
 
+	if (x->isadeviceopen){
+	    hid_close(x->handle);
+	}
 	
-	hid_close(x->handle);
 	/* Free static HIDAPI objects. */
 	hid_exit();
 	
@@ -288,6 +198,8 @@ static void *hidraw_new(void)
 	// Best/recommended option - call it right after hid_init.
 	hid_darwin_set_open_exclusive(0);
 #endif
+
+    hidraw_pdversion();
  
   return (void *)x;
 }
@@ -297,7 +209,7 @@ static void *hidraw_new(void)
 
 void hidraw_setup(void) {
 
-  hidraw_class = class_new(gensym("hidraw"),      
+    hidraw_class = class_new(gensym("hidraw"),      
 			       (t_newmethod)hidraw_new,
 			       (t_method)hidraw_free,                          
 			       sizeof(t_hidraw),       
@@ -305,10 +217,8 @@ void hidraw_setup(void) {
 			       0);                        
 
     
-  class_addmethod(hidraw_class, (t_method)hidraw_main, gensym("test"), 0);
-  class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
-  class_addmethod(hidraw_class, (t_method)hidraw_pdversion, gensym("version"), 0);
-  class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
-  class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
-
+    class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
+    class_addbang(hidraw_class, hidraw_poll);
 }
