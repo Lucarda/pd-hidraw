@@ -13,24 +13,21 @@ hidraw.class.sources = \
 	
 
 define forLinux
-  hidraw.class.sources += ${SOURCE_DIR}/linux/hid.c
-  XINCLUDE += \
-    ${empty}
-  ldlibs += -ludev -lrt
+	hidraw.class.sources += ${SOURCE_DIR}/linux/hid.c
+	XINCLUDE += \
+	ldlibs += -ludev -lrt
 endef
 
 define forWindows
-  hidraw.class.sources += ${SOURCE_DIR}/windows/hid.c
-  XINCLUDE += \
-    -I ${SOURCE_DIR}/windows
-    ${empty}
-  ldlibs += -mwindows
+	hidraw.class.sources += ${SOURCE_DIR}/windows/hid.c
+	XINCLUDE += -I ${SOURCE_DIR}/windows
+	ldlibs += -mwindows
 endef
 
 define forDarwin
-  XINCLUDE += \
-    -I ${SOURCE_DIR}/mac
-    ${empty}
+	hidraw.class.sources += ${SOURCE_DIR}/windows/hid.c
+	XINCLUDE += -I ${SOURCE_DIR}/mac
+	ldlibs += -framework IOKit -framework CoreFoundation -framework AppKit
 endef
 
 datafiles = \
