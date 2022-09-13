@@ -75,9 +75,9 @@ use with "openhid" \, (scroll the console).;
 #X restore 348 388 pd hid-permissions;
 #X obj 348 345 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X text 489 345 macOS;
-#X text 369 343 Linux;
-#X obj 470 349 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X text 490 344 macOS;
+#X text 366 344 Linux;
+#X obj 471 345 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X text 44 21 [hidraw] most likely wont let you read from a mouse or
 keyboard as this is a security issue for most OSs. it is supposed to
