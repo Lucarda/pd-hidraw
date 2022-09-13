@@ -199,7 +199,7 @@ static void *hidraw_new(void)
 	hid_darwin_set_open_exclusive(0);
 #endif
 
-    hidraw_pdversion();
+    
  
   return (void *)x;
 }
@@ -221,4 +221,6 @@ void hidraw_setup(void) {
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
     class_addbang(hidraw_class, hidraw_poll);
+	
+    hidraw_pdversion();
 }
