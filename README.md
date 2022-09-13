@@ -9,7 +9,7 @@ provides read access to HIDs wrapping code from [https://github.com/libusb/hidap
 
 ### building 
 
-to build on Linux first get the `libudev-dev` for your distro (here shown for Debian). 
+to build on Linux first get the `libudev-dev` pkg for your distro (here shown for Debian). 
 
 	sudo apt install libudev-dev
 	
