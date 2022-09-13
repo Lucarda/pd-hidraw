@@ -25,7 +25,7 @@ define forWindows
 endef
 
 define forDarwin
-	hidraw.class.sources += ${SOURCE_DIR}/windows/hid.c
+	hidraw.class.sources += ${SOURCE_DIR}/mac/hid.c
 	XINCLUDE += -I ${SOURCE_DIR}/mac
 	ldlibs += -framework IOKit -framework CoreFoundation -framework AppKit
 endef
