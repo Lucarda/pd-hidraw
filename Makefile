@@ -8,9 +8,8 @@ XINCLUDE = -I ${SOURCE_DIR}/hidapi
 cflags = ${XINCLUDE} -I . -DHAVE_CONFIG_H
 
 
-hidraw.class.sources = \
-	pd-hidraw.c \
-	
+hidraw.class.sources = pd-hidraw.c
+
 
 define forLinux
 	hidraw.class.sources += ${SOURCE_DIR}/linux/hid.c
@@ -31,13 +30,9 @@ define forDarwin
 endef
 
 datafiles = \
-
-
-
-
-
-# -static 
-
+	README.md \
+	hidraw-help.pd \
+	${empty}
 
 
 

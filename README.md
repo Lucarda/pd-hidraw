@@ -1,7 +1,7 @@
 # pd-hidraw
 
 
-Home of pd-hidraw is [#](#)
+Home of pd-hidraw is [https://github.com/Lucarda/pd-hidraw](https://github.com/Lucarda/pd-hidraw)
 
 
 A [Pure-Data](https://github.com/pure-data/pure-data) external that 
