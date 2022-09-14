@@ -4,15 +4,15 @@
 #X obj 82 135 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
 #X msg 30 90 listdevices;
-#X msg 129 295 closehid;
-#X obj 413 188 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X msg 134 270 closehid;
+#X obj 428 182 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X listbox 115 453 57 0 0 0 - - - 0;
-#X obj 434 188 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 449 182 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 435 215 metro 2;
-#X floatatom 481 188 5 0 0 0 - - - 0;
-#X obj 522 214 bang~;
+#X obj 450 209 metro 2;
+#X floatatom 496 182 5 0 0 0 - - - 0;
+#X obj 586 180 bang~;
 #X obj 68 493 unpack 0 0 0 0 0 0 0 0, f 55;
 #X floatatom 68 554 5 0 0 0 - - - 0;
 #X floatatom 121 555 5 0 0 0 - - - 0;
@@ -42,7 +42,7 @@
 #X connect 6 0 0 0;
 #X connect 7 0 0 0;
 #X connect 8 0 7 0;
-#X restore 432 268 pd toggle;
+#X restore 447 262 pd toggle;
 #X obj 68 522 change;
 #X obj 121 522 change;
 #X obj 178 522 change;
@@ -52,9 +52,7 @@
 #X obj 395 522 change;
 #X obj 448 522 change;
 #X obj 83 387 list prepend 0;
-#X text 440 159 --- poll ---;
-#X text 570 212 <-- If DSP is on poll on each audio block, f 22;
-#X obj 505 250 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#X obj 520 244 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #X obj 178 360 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
@@ -85,13 +83,16 @@ work with HID compatible devices like joysticks \, etc., f 71;
 #X msg 115 191 openhid-vidpid 5050 23;
 #X text 147 212 open device via VID PID (shon in the console if you
 did "listdevices"., f 25;
-#X obj 416 298 b;
+#X text 585 206 If DSP is on poll on each audio block, f 17;
+#X obj 431 292 s \$0-poll;
+#X obj 135 308 r \$0-poll;
+#X text 455 153 -------- poll --------;
 #X connect 0 0 30 0;
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
 #X connect 3 0 0 0;
 #X connect 4 0 0 0;
-#X connect 5 0 44 0;
+#X connect 5 0 43 0;
 #X connect 7 0 8 0;
 #X connect 8 0 21 0;
 #X connect 9 0 8 1;
@@ -106,7 +107,7 @@ did "listdevices"., f 25;
 #X connect 11 7 29 0;
 #X connect 20 0 11 0;
 #X connect 20 1 6 0;
-#X connect 21 0 44 0;
+#X connect 21 0 43 0;
 #X connect 22 0 12 0;
 #X connect 23 0 13 0;
 #X connect 24 0 14 0;
@@ -116,9 +117,9 @@ did "listdevices"., f 25;
 #X connect 28 0 18 0;
 #X connect 29 0 19 0;
 #X connect 30 0 20 0;
-#X connect 33 0 21 2;
-#X connect 34 0 30 1;
-#X connect 37 0 36 0;
-#X connect 40 0 36 1;
-#X connect 42 0 0 0;
+#X connect 31 0 21 2;
+#X connect 32 0 30 1;
+#X connect 35 0 34 0;
+#X connect 38 0 34 1;
+#X connect 40 0 0 0;
 #X connect 44 0 0 0;
