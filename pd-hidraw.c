@@ -48,6 +48,8 @@ typedef struct _hidraw {
     struct hid_device_info *devs;
     unsigned short foundPID[MAXHIDS];
     unsigned short foundVID[MAXHIDS];
+    unsigned short targetPID;
+    unsigned short targetVID;
     unsigned char writebuf[256];
     unsigned char readbuf[256];
     char currentpdhid;
@@ -79,6 +81,8 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
         
         if (x->foundVID[i-1] != cur_dev->vendor_id && x->foundPID[i-1] != cur_dev->product_id) {
             post("-----------\nPd device enum: %d", i);
+            post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id, 
+                cur_dev->product_id);
             x->foundVID[i] = cur_dev->vendor_id;
             x->foundPID[i] = cur_dev->product_id;
             i++;
@@ -88,20 +92,19 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
     }
 }
 
-static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
-    
-    
-    unsigned short pdenum = (unsigned short) hidn;
+static void hidraw_open(t_hidraw *x) {    
     
     // Open the device using the VID, PID,
     // and optionally the Serial number.
-    x->handle = hid_open(x->foundVID[pdenum], x->foundPID[pdenum], NULL);
+    x->handle = hid_open(x->targetVID, x->targetPID, NULL);
     
     if (!x->handle) {
-        post("unable to open device %d", (int)hidn);
+        post("hidraw: unable to open device");
         x->isadeviceopen = 0;
         return;
     }
+    
+    post("hidraw: successfully opened the device");
     
     x->isadeviceopen = 1;
     
@@ -117,10 +120,26 @@ static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
     
 }
 
+static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
+    
+    unsigned short pdenum = (unsigned short) hidn;
+    x->targetVID = x->foundVID[pdenum];
+    x->targetPID = x->foundPID[pdenum];
+    hidraw_open(x); 
+}
+
+static void hidraw_opendevice_vidpid(t_hidraw *x, t_float vid, t_float pid) {
+
+    x->targetVID = (unsigned short) vid;
+    x->targetPID = (unsigned short) pid;
+    hidraw_open(x); 
+}
+
 static void hidraw_closedevice(t_hidraw *x) {
 
     hid_close(x->handle);
     x->isadeviceopen = 0;
+    post("hidraw: device closed");
     
 }
 
@@ -139,7 +158,7 @@ static void hidraw_poll(t_hidraw *x) {
     t_atom out[256];
 
     if (!x->isadeviceopen){
-        post("no device opened yet");
+        post("hidraw: no device opened yet");
         return;
     }
 
@@ -150,10 +169,15 @@ static void hidraw_poll(t_hidraw *x) {
     i = 0;
 
     res = hid_read(x->handle, x->readbuf, sizeof(x->readbuf));
+    
+    if (res < 0) {
+        post("hidraw: unable to read(): %ls\n", hid_error(x->handle));
+        return;
+    }
 
-    for(i=0; i < res; i++) {
-    SETFLOAT(out+i, x->readbuf[i]);
-      }
+    for (i=0; i < res; i++) {
+        SETFLOAT(out+i, x->readbuf[i]);
+    }
     outlet_list(x->x_outlet1, &s_list, res, out);
     
 }
@@ -220,6 +244,7 @@ void hidraw_setup(void) {
     
     class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("openhid-vidpid"), A_FLOAT, A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
     class_addbang(hidraw_class, hidraw_poll);
     

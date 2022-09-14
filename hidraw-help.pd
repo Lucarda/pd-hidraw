@@ -1,18 +1,18 @@
-#N canvas 361 35 654 603 12;
-#X obj 86 327 hidraw;
-#X msg 87 186 openhid \$1;
-#X obj 87 165 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#N canvas 268 35 747 603 12;
+#X obj 83 342 hidraw;
+#X msg 82 156 openhid \$1;
+#X obj 82 135 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
-#X msg 36 105 listdevices;
-#X msg 117 224 closehid;
-#X obj 300 188 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X msg 30 90 listdevices;
+#X msg 129 295 closehid;
+#X obj 413 188 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X listbox 118 436 57 0 0 0 - - - 0;
-#X obj 321 188 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X listbox 115 453 57 0 0 0 - - - 0;
+#X obj 434 188 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 322 215 metro 2;
-#X floatatom 368 188 5 0 0 0 - - - 0;
-#X obj 409 214 bang~;
+#X obj 435 215 metro 2;
+#X floatatom 481 188 5 0 0 0 - - - 0;
+#X obj 522 214 bang~;
 #X obj 68 493 unpack 0 0 0 0 0 0 0 0, f 55;
 #X floatatom 68 554 5 0 0 0 - - - 0;
 #X floatatom 121 555 5 0 0 0 - - - 0;
@@ -22,7 +22,7 @@
 #X floatatom 338 556 5 0 0 0 - - - 0;
 #X floatatom 395 556 5 0 0 0 - - - 0;
 #X floatatom 448 557 5 0 0 0 - - - 0;
-#X obj 86 402 route 0 1;
+#X obj 83 417 route 0 1;
 #N canvas 182 182 450 300 toggle 0;
 #X obj 133 215 outlet;
 #X obj 153 39 inlet;
@@ -42,7 +42,7 @@
 #X connect 6 0 0 0;
 #X connect 7 0 0 0;
 #X connect 8 0 7 0;
-#X restore 319 268 pd toggle;
+#X restore 432 268 pd toggle;
 #X obj 68 522 change;
 #X obj 121 522 change;
 #X obj 178 522 change;
@@ -51,14 +51,14 @@
 #X obj 338 522 change;
 #X obj 395 522 change;
 #X obj 448 522 change;
-#X obj 86 372 list prepend 0;
-#X text 327 159 --- poll ---;
-#X text 457 212 <-- If DSP is on poll on each audio block, f 22;
-#X obj 392 250 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#X obj 83 387 list prepend 0;
+#X text 440 159 --- poll ---;
+#X text 570 212 <-- If DSP is on poll on each audio block, f 22;
+#X obj 505 250 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
-#X obj 181 345 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#X obj 178 360 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
-#X text 136 105 <-- first this. it will give the "Pd device enum" to
+#X text 130 90 <-- first this. it will give the "Pd device enum" to
 use with "openhid" \, (scroll the console).;
 #N canvas 156 156 563 451 hid-permissions 0;
 #X obj 63 61 inlet;
@@ -72,22 +72,26 @@ use with "openhid" \, (scroll the console).;
 #X connect 2 0 1 0;
 #X connect 3 0 1 0;
 #X connect 4 0 3 0;
-#X restore 348 388 pd hid-permissions;
-#X obj 348 345 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X restore 447 408 pd hid-permissions;
+#X obj 447 365 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X text 490 344 macOS;
-#X text 366 344 Linux;
-#X obj 471 345 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X text 589 364 macOS;
+#X text 465 364 Linux;
+#X obj 570 365 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X text 44 21 [hidraw] most likely wont let you read from a mouse or
 keyboard as this is a security issue for most OSs. it is supposed to
 work with HID compatible devices like joysticks \, etc., f 71;
+#X msg 115 191 openhid-vidpid 5050 23;
+#X text 147 212 open device via VID PID (shon in the console if you
+did "listdevices"., f 25;
+#X obj 416 298 b;
 #X connect 0 0 30 0;
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
 #X connect 3 0 0 0;
 #X connect 4 0 0 0;
-#X connect 5 0 0 0;
+#X connect 5 0 44 0;
 #X connect 7 0 8 0;
 #X connect 8 0 21 0;
 #X connect 9 0 8 1;
@@ -102,7 +106,7 @@ work with HID compatible devices like joysticks \, etc., f 71;
 #X connect 11 7 29 0;
 #X connect 20 0 11 0;
 #X connect 20 1 6 0;
-#X connect 21 0 0 0;
+#X connect 21 0 44 0;
 #X connect 22 0 12 0;
 #X connect 23 0 13 0;
 #X connect 24 0 14 0;
@@ -116,3 +120,5 @@ work with HID compatible devices like joysticks \, etc., f 71;
 #X connect 34 0 30 1;
 #X connect 37 0 36 0;
 #X connect 40 0 36 1;
+#X connect 42 0 0 0;
+#X connect 44 0 0 0;

@@ -13,7 +13,6 @@ hidraw.class.sources = pd-hidraw.c
 
 define forLinux
 	hidraw.class.sources += ${SOURCE_DIR}/linux/hid.c
-	XINCLUDE += \
 	ldlibs += -ludev -lrt
 endef
 
@@ -36,8 +35,5 @@ datafiles = \
 
 
 
-# include Makefile.pdlibbuilder
-# (for real-world projects see the "Project Management" section
-# in tips-tricks.md)
 PDLIBBUILDER_DIR=./pd-lib-builder
 include $(PDLIBBUILDER_DIR)/Makefile.pdlibbuilder
