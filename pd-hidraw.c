@@ -99,7 +99,7 @@ static void hidraw_open(t_hidraw *x) {
     x->handle = hid_open(x->targetVID, x->targetPID, NULL);
     
     if (!x->handle) {
-        post("hidraw: unable to open device");
+        post("hidraw: unable to open device: %ls\n", hid_error(x->handle));
         x->isadeviceopen = 0;
         return;
     }
