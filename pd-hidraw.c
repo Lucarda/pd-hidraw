@@ -137,10 +137,11 @@ static void hidraw_opendevice_vidpid(t_hidraw *x, t_float vid, t_float pid) {
 
 static void hidraw_closedevice(t_hidraw *x) {
 
-    hid_close(x->handle);
-    x->isadeviceopen = 0;
-    post("hidraw: device closed");
-    
+    if (x->isadeviceopen){
+        hid_close(x->handle);
+        x->isadeviceopen = 0;
+        post("hidraw: device closed");
+    }   
 }
 
 static void hidraw_listhids(t_hidraw *x) {
