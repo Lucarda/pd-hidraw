@@ -113,7 +113,7 @@ static void hidraw_open(t_hidraw *x) {
     hid_set_nonblocking(x->handle, 1);
     
     // Set up buffers.
-	memset(x->readbuf,0x00,sizeof(x->readbuf));
+    memset(x->readbuf,0x00,sizeof(x->readbuf));
     //memset(x->writebuf,0x00,sizeof(x->writebuf));    
     //x->writebuf[0] = 0x01;
     //x->writebuf[1] = 0x81;
