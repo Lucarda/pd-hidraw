@@ -19,15 +19,6 @@
 #endif
 
 
-// Fallback/example
-#ifndef HID_API_MAKE_VERSION
-#define HID_API_MAKE_VERSION(mj, mn, p) (((mj) << 24) | ((mn) << 8) | (p))
-#endif
-#ifndef HID_API_VERSION
-#define HID_API_VERSION HID_API_MAKE_VERSION(HID_API_VERSION_MAJOR, HID_API_VERSION_MINOR, HID_API_VERSION_PATCH)
-#endif
-
-
 // Sample using platform-specific headers
 #if defined(__APPLE__) 
 #include <hidapi_darwin.h>
@@ -50,9 +41,7 @@ typedef struct _hidraw {
     unsigned short foundVID[MAXHIDS];
     unsigned short targetPID;
     unsigned short targetVID;
-    unsigned char writebuf[256];
     unsigned char readbuf[256];
-    char currentpdhid;
     char isadeviceopen;
     hid_device *handle;
     t_canvas  *x_canvas;
@@ -114,9 +103,6 @@ static void hidraw_open(t_hidraw *x) {
     
     // Set up buffers.
     memset(x->readbuf,0x00,sizeof(x->readbuf));
-    //memset(x->writebuf,0x00,sizeof(x->writebuf));    
-    //x->writebuf[0] = 0x01;
-    //x->writebuf[1] = 0x81;
     
 }
 
@@ -214,7 +200,6 @@ static void *hidraw_new(void)
   
     x->foundVID[0] = 0;
     x->foundPID[0] = 0;
-    x->currentpdhid = 0;
     x->isadeviceopen = 0;
   
     hid_init();
