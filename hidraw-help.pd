@@ -1,4 +1,4 @@
-#N canvas 268 35 747 603 12;
+#N canvas 268 35 747 642 12;
 #X obj 83 342 hidraw;
 #X msg 78 146 openhid \$1;
 #X obj 78 125 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
@@ -7,22 +7,22 @@
 #X msg 134 270 closehid;
 #X obj 428 182 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X listbox 115 453 57 0 0 0 - - - 0;
+#X listbox 115 493 57 0 0 0 - - - 0;
 #X obj 449 182 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
 #X obj 450 209 metro 2;
 #X floatatom 496 182 5 0 0 0 - - - 0;
 #X obj 586 180 bang~;
-#X obj 68 493 unpack 0 0 0 0 0 0 0 0, f 55;
-#X floatatom 68 554 5 0 0 0 - - - 0;
-#X floatatom 121 555 5 0 0 0 - - - 0;
-#X floatatom 178 555 5 0 0 0 - - - 0;
-#X floatatom 231 556 5 0 0 0 - - - 0;
-#X floatatom 285 556 5 0 0 0 - - - 0;
-#X floatatom 338 556 5 0 0 0 - - - 0;
-#X floatatom 395 556 5 0 0 0 - - - 0;
-#X floatatom 448 557 5 0 0 0 - - - 0;
-#X obj 83 417 route 0 1;
+#X obj 68 533 unpack 0 0 0 0 0 0 0 0, f 55;
+#X floatatom 68 594 5 0 0 0 - - - 0;
+#X floatatom 121 595 5 0 0 0 - - - 0;
+#X floatatom 178 595 5 0 0 0 - - - 0;
+#X floatatom 231 596 5 0 0 0 - - - 0;
+#X floatatom 285 596 5 0 0 0 - - - 0;
+#X floatatom 338 596 5 0 0 0 - - - 0;
+#X floatatom 395 596 5 0 0 0 - - - 0;
+#X floatatom 448 597 5 0 0 0 - - - 0;
+#X obj 83 457 route 0 1;
 #N canvas 182 182 450 300 toggle 0;
 #X obj 133 215 outlet;
 #X obj 153 39 inlet;
@@ -43,18 +43,18 @@
 #X connect 7 0 0 0;
 #X connect 8 0 7 0;
 #X restore 447 262 pd toggle;
-#X obj 68 522 change;
-#X obj 121 522 change;
-#X obj 178 522 change;
-#X obj 231 522 change;
-#X obj 285 522 change;
-#X obj 338 522 change;
-#X obj 395 522 change;
-#X obj 448 522 change;
-#X obj 83 387 list prepend 0;
+#X obj 68 562 change;
+#X obj 121 562 change;
+#X obj 178 562 change;
+#X obj 231 562 change;
+#X obj 285 562 change;
+#X obj 338 562 change;
+#X obj 395 562 change;
+#X obj 448 562 change;
+#X obj 83 427 list prepend 0;
 #X obj 520 244 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
-#X obj 178 360 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#X obj 178 400 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #X text 132 80 <-- first this. it will give the "Pd device enum" to
 use with "openhid" \, (scroll the console).;
@@ -70,12 +70,12 @@ use with "openhid" \, (scroll the console).;
 #X connect 2 0 1 0;
 #X connect 3 0 1 0;
 #X connect 4 0 3 0;
-#X restore 447 408 pd hid-permissions;
-#X obj 447 365 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X restore 530 360 pd hid-permissions;
+#X obj 530 317 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X text 589 364 macOS;
-#X text 465 364 Linux;
-#X obj 570 365 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X text 672 316 macOS;
+#X text 548 316 Linux;
+#X obj 653 317 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X msg 115 191 openhid-vidpid 5050 23;
 #X text 147 212 open device via VID PID (shon in the console if you
@@ -85,7 +85,9 @@ did "listdevices"., f 25;
 #X obj 135 308 r \$0-poll;
 #X text 455 153 -------- poll --------;
 #X text 44 21 [hidraw] reads raw bytes from HIDs., f 71;
+#X floatatom 122 374 5 0 0 0 - - - 0;
 #X connect 0 0 30 0;
+#X connect 0 1 46 0;
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
 #X connect 3 0 0 0;
