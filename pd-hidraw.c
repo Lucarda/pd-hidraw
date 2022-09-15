@@ -188,7 +188,10 @@ static void hidraw_free(t_hidraw *x) {
 
     if (x->handle){
         hid_close(x->handle);
-    }
+    }  
+}
+
+static void hidraw_cleanup(t_class *c) {
     
     /* Free static HIDAPI objects. */
     hid_exit();
@@ -209,14 +212,6 @@ static void *hidraw_new(void)
     x->foundVID[0] = 0;
     x->foundPID[0] = 0;
     x->handle = NULL;
-  
-    hid_init();
-
-#if defined(__APPLE__) 
-    // To work properly needs to be called before hid_open/hid_open_path after hid_init.
-    // Best/recommended option - call it right after hid_init.
-    hid_darwin_set_open_exclusive(0);
-#endif
 
     return (void *)x;
 }
@@ -234,11 +229,19 @@ void hidraw_setup(void) {
                    0);
 
     
+    class_setfreefn(hidraw_class, hidraw_cleanup);
     class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("openhid-vidpid"), A_FLOAT, A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
     class_addbang(hidraw_class, hidraw_poll);
     
-    hidraw_pdversion();
+    hidraw_pdversion();        
+    hid_init();
+
+#if defined(__APPLE__) 
+    // To work properly needs to be called before hid_open/hid_open_path after hid_init.
+    // Best/recommended option - call it right after hid_init.
+    hid_darwin_set_open_exclusive(0);
+#endif
 }
