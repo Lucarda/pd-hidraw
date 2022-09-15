@@ -244,4 +244,5 @@ void hidraw_setup(void) {
     // Best/recommended option - call it right after hid_init.
     hid_darwin_set_open_exclusive(0);
 #endif
+
 }
