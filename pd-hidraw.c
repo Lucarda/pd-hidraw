@@ -191,13 +191,17 @@ static void hidraw_free(t_hidraw *x) {
     }  
 }
 
+
+// this is commented out because it is incompatible with not so old Pds
+/*
+
 static void hidraw_cleanup(t_class *c) {
     
-    /* Free static HIDAPI objects. */
+    //Free static HIDAPI objects. (when Pd shuts down.)   
     hid_exit();
     
 }
-
+*/
 
 
 static void *hidraw_new(void)
@@ -229,7 +233,7 @@ void hidraw_setup(void) {
                    0);
 
     
-    class_setfreefn(hidraw_class, hidraw_cleanup);
+    //class_setfreefn(hidraw_class, hidraw_cleanup); // I prefer to not do this as it is incompatible with not so old Pds.
     class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("openhid-vidpid"), A_FLOAT, A_FLOAT, 0);
