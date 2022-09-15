@@ -142,8 +142,7 @@ static void hidraw_listhids(t_hidraw *x) {
 
 static void hidraw_poll(t_hidraw *x) {
 
-    int res;    
-    int i;
+    int res;
     t_atom out[256];
 
     if (!x->handle){
@@ -155,8 +154,7 @@ static void hidraw_poll(t_hidraw *x) {
     // non-blocking by the call to hid_set_nonblocking() above.
     // This loop demonstrates the non-blocking nature of hid_read().
     res = 0;
-    i = 0;
-
+    
     res = hid_read(x->handle, x->readbuf, sizeof(x->readbuf));
     
     if (res < 0) {
@@ -170,7 +168,7 @@ static void hidraw_poll(t_hidraw *x) {
         return;
     }
 
-    for (i=0; i < res; i++) {
+    for (int i = 0; i < res; i++) {
         SETFLOAT(out+i, x->readbuf[i]);
     }
     outlet_float(x->readstatus, 2);
