@@ -1,18 +1,18 @@
-#N canvas 268 35 747 642 12;
+#N canvas 268 35 884 642 12;
 #X obj 83 342 hidraw;
 #X msg 78 146 openhid \$1;
 #X obj 78 125 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
 #X msg 32 80 listdevices;
 #X msg 134 270 closehid;
-#X obj 428 182 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X obj 432 156 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X listbox 115 493 57 0 0 0 - - - 0;
-#X obj 449 182 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#X obj 453 156 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
 #000000 0 1;
-#X obj 450 209 metro 2;
-#X floatatom 496 182 5 0 0 0 - - - 0;
-#X obj 586 180 bang~;
+#X obj 454 183 metro 2;
+#X floatatom 500 156 5 0 0 0 - - - 0;
+#X obj 590 154 bang~;
 #X obj 68 533 unpack 0 0 0 0 0 0 0 0, f 55;
 #X floatatom 68 594 5 0 0 0 - - - 0;
 #X floatatom 121 595 5 0 0 0 - - - 0;
@@ -42,7 +42,7 @@
 #X connect 6 0 0 0;
 #X connect 7 0 0 0;
 #X connect 8 0 7 0;
-#X restore 447 262 pd toggle;
+#X restore 451 236 pd toggle;
 #X obj 68 562 change;
 #X obj 121 562 change;
 #X obj 178 562 change;
@@ -52,7 +52,7 @@
 #X obj 395 562 change;
 #X obj 448 562 change;
 #X obj 83 427 list prepend 0;
-#X obj 520 244 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#X obj 524 218 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #X obj 178 400 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
@@ -70,23 +70,36 @@ use with "openhid" \, (scroll the console).;
 #X connect 2 0 1 0;
 #X connect 3 0 1 0;
 #X connect 4 0 3 0;
-#X restore 530 360 pd hid-permissions;
-#X obj 530 317 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X restore 332 436 pd hid-permissions;
+#X obj 332 393 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X text 672 316 macOS;
-#X text 548 316 Linux;
-#X obj 653 317 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
+#X text 474 392 macOS;
+#X text 350 392 Linux;
+#X obj 455 393 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X msg 115 191 openhid-vidpid 5050 23;
 #X text 147 212 open device via VID PID (shon in the console if you
 did "listdevices"., f 25;
-#X text 585 206 If DSP is on poll on each audio block, f 17;
-#X obj 431 292 s \$0-poll;
+#X text 589 180 If DSP is on poll on each audio block, f 17;
+#X obj 435 266 s \$0-poll;
 #X obj 135 308 r \$0-poll;
-#X text 455 153 -------- poll --------;
-#X text 44 21 [hidraw] reads raw bytes from HIDs., f 71;
-#X floatatom 122 374 5 0 0 0 - - - 0;
-#X connect 0 0 30 0;
+#X text 459 127 -------- poll --------;
+#X text 44 21 [hidraw] reads raw bytes from HIDs.;
+#X obj 122 370 == 2;
+#X obj 84 397 spigot;
+#X text 629 482 1st: <list> raw bytes;
+#X text 628 508 2nd: <float>;
+#X text 659 529 -1 = read error;
+#X text 666 547 1 = waiting;
+#X text 665 564 2 = read Ok;
+#X text 585 458 outlets:;
+#X text 579 317 inlet:;
+#X text 620 380 openhid: <float>;
+#X text 621 402 openhid-vidpid: <float> <float>;
+#X text 620 422 closehid: none;
+#X text 617 359 listdevices: none;
+#X text 618 341 <bang>: read from device;
+#X connect 0 0 47 0;
 #X connect 0 1 46 0;
 #X connect 1 0 0 0;
 #X connect 2 0 1 0;
@@ -123,3 +136,5 @@ did "listdevices"., f 25;
 #X connect 38 0 34 1;
 #X connect 39 0 0 0;
 #X connect 43 0 0 0;
+#X connect 46 0 47 1;
+#X connect 47 0 30 0;
