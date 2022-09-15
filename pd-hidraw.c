@@ -159,19 +159,19 @@ static void hidraw_poll(t_hidraw *x) {
     
     if (res < 0) {
         post("hidraw: unable to read(): %ls\n", hid_error(x->handle));
-		outlet_float(x->readstatus, -1);
+        outlet_float(x->readstatus, -1);
         return;
     }
-	
-	if (res == 0) {
-		outlet_float(x->readstatus, 1); //waiting...
-		return;
-	}
+    
+    if (res == 0) {
+        outlet_float(x->readstatus, 1); //waiting...
+        return;
+    }
 
     for (i=0; i < res; i++) {
         SETFLOAT(out+i, x->readbuf[i]);
     }
-	outlet_float(x->readstatus, 2);
+    outlet_float(x->readstatus, 2);
     outlet_list(x->bytes_out, &s_list, res, out);
     
 }
@@ -204,7 +204,7 @@ static void *hidraw_new(void)
     x->x_canvas = canvas_getcurrent();
   
     x->bytes_out = outlet_new(&x->x_obj, &s_list);
-	x->readstatus = outlet_new(&x->x_obj, &s_float);
+    x->readstatus = outlet_new(&x->x_obj, &s_float);
   
     x->foundVID[0] = 0;
     x->foundPID[0] = 0;
