@@ -42,7 +42,6 @@ typedef struct _hidraw {
     unsigned short targetPID;
     unsigned short targetVID;
     unsigned char readbuf[256];
-    char isadeviceopen;
     hid_device *handle;
     t_canvas  *x_canvas;
     t_outlet *bytes_out, *readstatus;
@@ -81,7 +80,13 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
     }
 }
 
-static void hidraw_open(t_hidraw *x) {    
+static void hidraw_open(t_hidraw *x) {
+    
+    if (x->handle){
+        hid_close(x->handle);
+        x->handle = NULL;
+        post("hidraw: closing previously opened device ...");
+    } 
     
     // Open the device using the VID, PID,
     // and optionally the Serial number.
@@ -89,14 +94,11 @@ static void hidraw_open(t_hidraw *x) {
     
     if (!x->handle) {
         post("hidraw: unable to open device: %ls\n", hid_error(x->handle));
-        x->isadeviceopen = 0;
+        x->handle = NULL;
         return;
     }
     
     post("hidraw: successfully opened the device");
-    
-    x->isadeviceopen = 1;
-    
     
     // Set the hid_read() function to be non-blocking.
     hid_set_nonblocking(x->handle, 1);
@@ -123,9 +125,9 @@ static void hidraw_opendevice_vidpid(t_hidraw *x, t_float vid, t_float pid) {
 
 static void hidraw_closedevice(t_hidraw *x) {
 
-    if (x->isadeviceopen){
+    if (x->handle){
         hid_close(x->handle);
-        x->isadeviceopen = 0;
+        x->handle = NULL;
         post("hidraw: device closed");
     }   
 }
@@ -144,7 +146,7 @@ static void hidraw_poll(t_hidraw *x) {
     int i;
     t_atom out[256];
 
-    if (!x->isadeviceopen){
+    if (!x->handle){
         post("hidraw: no device opened yet");
         return;
     }
@@ -186,7 +188,7 @@ static void hidraw_pdversion(void) {
 
 static void hidraw_free(t_hidraw *x) {
 
-    if (x->isadeviceopen){
+    if (x->handle){
         hid_close(x->handle);
     }
     
@@ -208,7 +210,7 @@ static void *hidraw_new(void)
   
     x->foundVID[0] = 0;
     x->foundPID[0] = 0;
-    x->isadeviceopen = 0;
+    x->handle = NULL;
   
     hid_init();
 
@@ -218,9 +220,7 @@ static void *hidraw_new(void)
     hid_darwin_set_open_exclusive(0);
 #endif
 
-    
- 
-  return (void *)x;
+    return (void *)x;
 }
 
 
