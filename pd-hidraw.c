@@ -66,15 +66,12 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
     int i = 0;
     
     while (cur_dev) {
-        
-        if (x->foundVID[i-1] != cur_dev->vendor_id && x->foundPID[i-1] != cur_dev->product_id) {
-            post("-----------\nPd device enum: %d", i);
-            post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id, 
-                cur_dev->product_id);
-            x->foundVID[i] = cur_dev->vendor_id;
-            x->foundPID[i] = cur_dev->product_id;
-            i++;
-        }
+        post("-----------\nPd device enum: %d", i);
+        post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id, 
+            cur_dev->product_id);
+        x->foundVID[i] = cur_dev->vendor_id;
+        x->foundPID[i] = cur_dev->product_id;
+        i++;
         print_device(cur_dev);
         cur_dev = cur_dev->next;
     }
