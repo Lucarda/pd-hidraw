@@ -42,6 +42,8 @@ typedef struct _hidraw {
     unsigned short targetPID;
     unsigned short targetVID;
     unsigned char readbuf[256];
+    unsigned char readbuf_past[256];
+    int readlen;
     hid_device *handle;
     t_canvas  *x_canvas;
     t_outlet *bytes_out, *readstatus;
@@ -102,6 +104,7 @@ static void hidraw_open(t_hidraw *x) {
     
     // Set up buffers.
     memset(x->readbuf,0x00,sizeof(x->readbuf));
+    memset(x->readbuf_past,0x00,sizeof(x->readbuf_past));
     
 }
 
@@ -136,10 +139,26 @@ static void hidraw_listhids(t_hidraw *x) {
     hid_free_enumeration(x->devs);
 }
 
+static char hidraw_change(t_hidraw *x) {
+    
+    char r = -1;
+    
+    for (int i = 0; i < x->readlen; i++) {
+        if (x->readbuf_past[i] != x->readbuf[i]) {
+            memcpy(x->readbuf_past, x->readbuf, sizeof(x->readbuf));
+            r = 1;
+            break;
+        } else {
+            r = 0;
+        }
+    }
+    return(r);    
+}
+
 
 static void hidraw_poll(t_hidraw *x) {
 
-    int res;
+    char change;
     t_atom out[256];
 
     if (!x->handle){
@@ -150,27 +169,32 @@ static void hidraw_poll(t_hidraw *x) {
     // Read requested state. hid_read() has been set to be
     // non-blocking by the call to hid_set_nonblocking() above.
     // This loop demonstrates the non-blocking nature of hid_read().
-    res = 0;
+    x->readlen = 0;
     
-    res = hid_read(x->handle, x->readbuf, sizeof(x->readbuf));
+    x->readlen = hid_read(x->handle, x->readbuf, sizeof(x->readbuf));
     
-    if (res < 0) {
+    if (x->readlen < 0) {
         post("hidraw: unable to read(): %ls\n", hid_error(x->handle));
         outlet_float(x->readstatus, -1);
         return;
     }
     
-    if (res == 0) {
+    if (x->readlen == 0) {
         outlet_float(x->readstatus, 1); //waiting...
         return;
     }
-
-    for (int i = 0; i < res; i++) {
-        SETFLOAT(out+i, x->readbuf[i]);
-    }
-    outlet_float(x->readstatus, 2);
-    outlet_list(x->bytes_out, &s_list, res, out);
     
+    change = hidraw_change(x);
+    
+    if (change) {
+        
+        for (int i = 0; i < x->readlen; i++) {
+            SETFLOAT(out+i, x->readbuf[i]);
+        }
+        outlet_float(x->readstatus, 2);
+        outlet_list(x->bytes_out, &s_list, x->readlen, out);
+        return;
+    } 
 }
 
 static void hidraw_pdversion(void) {
