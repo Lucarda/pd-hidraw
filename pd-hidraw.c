@@ -162,8 +162,7 @@ static char hidraw_change(t_hidraw *x) {
 static void hidraw_bang(t_hidraw *x) {
     
     x->bang = 1;
-    clock_delay(x->hidclock, 0);
-    
+    clock_delay(x->hidclock, 0);    
 }
 
 static void hidraw_poll(t_hidraw *x, t_float f ) {
@@ -171,9 +170,7 @@ static void hidraw_poll(t_hidraw *x, t_float f ) {
     x->bang = 0;
     x->polltime = f;
     if (f != 0) clock_delay(x->hidclock, 0);
-    else clock_unset(x->hidclock);
-    
-    
+    else clock_unset(x->hidclock);    
 }
 
 static void hidraw_tick(t_hidraw *x) {
@@ -211,7 +208,6 @@ static void hidraw_tick(t_hidraw *x) {
         }
         outlet_float(x->readstatus, 2);
         outlet_list(x->bytes_out, &s_list, x->readlen, out);
-        //return;
     }
     
     closeit:
