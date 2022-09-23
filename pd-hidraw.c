@@ -44,9 +44,12 @@ typedef struct _hidraw {
     unsigned char readbuf[256];
     unsigned char readbuf_past[256];
     int readlen;
+    char bang;
+    t_float polltime;
     hid_device *handle;
     t_canvas  *x_canvas;
     t_outlet *bytes_out, *readstatus;
+    t_clock *hidclock;
    
   } t_hidraw;
 
@@ -156,7 +159,24 @@ static char hidraw_change(t_hidraw *x) {
 }
 
 
-static void hidraw_poll(t_hidraw *x) {
+static void hidraw_bang(t_hidraw *x) {
+    
+    x->bang = 1;
+    clock_delay(x->hidclock, 0);
+    
+}
+
+static void hidraw_poll(t_hidraw *x, t_float f ) {
+    
+    x->bang = 0;
+    x->polltime = f;
+    if (f != 0) clock_delay(x->hidclock, 0);
+    else clock_unset(x->hidclock);
+    
+    
+}
+
+static void hidraw_tick(t_hidraw *x) {
 
     char change;
     t_atom out[256];
@@ -166,9 +186,6 @@ static void hidraw_poll(t_hidraw *x) {
         return;
     }
 
-    // Read requested state. hid_read() has been set to be
-    // non-blocking by the call to hid_set_nonblocking() above.
-    // This loop demonstrates the non-blocking nature of hid_read().
     x->readlen = 0;
     
     x->readlen = hid_read(x->handle, x->readbuf, sizeof(x->readbuf));
@@ -176,15 +193,16 @@ static void hidraw_poll(t_hidraw *x) {
     if (x->readlen < 0) {
         post("hidraw: unable to read(): %ls\n", hid_error(x->handle));
         outlet_float(x->readstatus, -1);
-        return;
+        goto closeit;
     }
     
     if (x->readlen == 0) {
         outlet_float(x->readstatus, 1); //waiting...
-        return;
+        goto closeit;
     }
     
-    change = hidraw_change(x);
+    if (x->bang) change = 1;
+    else change = hidraw_change(x);
     
     if (change) {
         
@@ -193,8 +211,14 @@ static void hidraw_poll(t_hidraw *x) {
         }
         outlet_float(x->readstatus, 2);
         outlet_list(x->bytes_out, &s_list, x->readlen, out);
-        return;
-    } 
+        //return;
+    }
+    
+    closeit:
+    if (x->bang) return;
+    else clock_delay(x->hidclock, x->polltime);
+
+
 }
 
 static void hidraw_pdversion(void) {
@@ -209,7 +233,8 @@ static void hidraw_free(t_hidraw *x) {
 
     if (x->handle){
         hid_close(x->handle);
-    }  
+    }
+    clock_free(x->hidclock);
 }
 
 
@@ -228,6 +253,8 @@ static void hidraw_cleanup(t_class *c) {
 static void *hidraw_new(void)
 {
     t_hidraw *x = (t_hidraw *)pd_new(hidraw_class);
+    
+    x->hidclock = clock_new(x, (t_method)hidraw_tick);
 
     x->x_canvas = canvas_getcurrent();
   
@@ -253,13 +280,14 @@ void hidraw_setup(void) {
                    CLASS_DEFAULT,
                    0);
 
-    
+
     //class_setfreefn(hidraw_class, hidraw_cleanup); // I prefer to not do this as it is incompatible with not so old Pds.
     class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("openhid-vidpid"), A_FLOAT, A_FLOAT, 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_poll, gensym("poll"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
-    class_addbang(hidraw_class, hidraw_poll);
+    class_addbang(hidraw_class, hidraw_bang);
     
     hidraw_pdversion();        
     hid_init();
