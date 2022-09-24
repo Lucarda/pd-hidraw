@@ -44,7 +44,6 @@ typedef struct _hidraw {
     unsigned char readbuf[256];
     unsigned char readbuf_past[256];
     int readlen;
-    char bang;
     t_float polltime;
     hid_device *handle;
     t_canvas  *x_canvas;
@@ -159,15 +158,8 @@ static char hidraw_change(t_hidraw *x) {
 }
 
 
-static void hidraw_bang(t_hidraw *x) {
-    
-    x->bang = 1;
-    clock_delay(x->hidclock, 0);    
-}
-
 static void hidraw_poll(t_hidraw *x, t_float f ) {
     
-    x->bang = 0;
     x->polltime = f;
     if (f != 0) clock_delay(x->hidclock, 0);
     else clock_unset(x->hidclock);    
@@ -177,6 +169,7 @@ static void hidraw_tick(t_hidraw *x) {
 
     char change;
     t_atom out[256];
+    
 
     if (!x->handle){
         post("hidraw: no device opened yet");
@@ -190,16 +183,15 @@ static void hidraw_tick(t_hidraw *x) {
     if (x->readlen < 0) {
         post("hidraw: unable to read(): %ls\n", hid_error(x->handle));
         outlet_float(x->readstatus, -1);
-        goto closeit;
+        goto polling;
     }
     
     if (x->readlen == 0) {
         outlet_float(x->readstatus, 1); //waiting...
-        goto closeit;
+        goto polling;
     }
     
-    if (x->bang) change = 1;
-    else change = hidraw_change(x);
+    change = hidraw_change(x);
     
     if (change) {
         
@@ -207,13 +199,11 @@ static void hidraw_tick(t_hidraw *x) {
             SETFLOAT(out+i, x->readbuf[i]);
         }
         outlet_float(x->readstatus, 2);
-        outlet_list(x->bytes_out, &s_list, x->readlen, out);
+        outlet_list(x->bytes_out, NULL, x->readlen, out);
     }
     
-    closeit:
-    if (x->bang) return;
-    else clock_delay(x->hidclock, x->polltime);
-
+    polling:
+    clock_delay(x->hidclock, x->polltime);
 
 }
 
@@ -283,7 +273,6 @@ void hidraw_setup(void) {
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("openhid-vidpid"), A_FLOAT, A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_poll, gensym("poll"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
-    class_addbang(hidraw_class, hidraw_bang);
     
     hidraw_pdversion();        
     hid_init();
