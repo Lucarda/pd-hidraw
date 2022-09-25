@@ -1,10 +1,8 @@
 #N canvas 268 35 884 642 12;
 #X obj 83 386 hidraw;
-#X msg 78 146 openhid \$1;
 #X obj 78 125 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
 #X msg 32 80 listdevices;
-#X msg 134 270 closehid;
 #X listbox 115 493 57 0 0 0 - - - 0;
 #X obj 68 533 unpack 0 0 0 0 0 0 0 0, f 55;
 #X floatatom 68 594 5 0 0 0 - - - 0;
@@ -27,8 +25,6 @@
 #X obj 83 427 list prepend 0;
 #X obj 178 400 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
-#X text 132 80 <-- first this. it will give the "Pd device enum" to
-use with "openhid" \, (scroll the console).;
 #N canvas 156 156 563 451 hid-permissions 0;
 #X obj 63 61 inlet;
 #X obj 107 361 pdcontrol;
@@ -59,8 +55,6 @@ Other HIDs (like "gamepads" or "joystcks") should work out of the box.
 #X text 637 130 Linux;
 #X obj 680 155 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X text 147 212 open device via VID PID (shon in the console if you
-did "listdevices"., f 25;
 #X text 44 21 [hidraw] reads raw bytes from HIDs.;
 #X text 629 494 1st: <list> raw bytes;
 #X text 628 520 2nd: <float>;
@@ -69,34 +63,41 @@ did "listdevices"., f 25;
 #X text 665 576 2 = read Ok;
 #X text 585 470 outlets:;
 #X text 579 332 inlet:;
-#X text 620 380 openhid: <float>;
-#X text 621 402 openhid-vidpid: <float> <float>;
-#X text 620 422 closehid: none;
 #X text 617 359 listdevices: none;
-#X msg 115 191 openhid-vidpid 2064 1;
-#X msg 187 338 poll 0;
-#X text 228 310 poll every <n> milliseconds;
-#X text 250 338 0 to stop polling;
+#X msg 217 332 poll 0;
+#X text 249 292 poll every <n> milliseconds;
+#X text 280 332 0 to stop polling;
 #X text 620 440 poll: <float>;
-#X msg 163 308 poll 5;
+#X msg 184 290 poll 5;
 #X obj 742 177 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X text 761 176 Windows;
-#X connect 0 0 24 0;
-#X connect 1 0 0 0;
-#X connect 2 0 1 0;
-#X connect 3 0 0 0;
-#X connect 4 0 0 0;
-#X connect 6 0 16 0;
-#X connect 6 1 17 0;
-#X connect 6 2 18 0;
-#X connect 6 3 19 0;
-#X connect 6 4 20 0;
-#X connect 6 5 21 0;
-#X connect 6 6 22 0;
-#X connect 6 7 23 0;
+#X msg 78 146 open \$1;
+#X msg 154 247 close;
+#X msg 115 191 open-vidpid 2064 1;
+#X text 132 80 <-- first this. it will give the "Pd device enum" to
+use with "open" \, (scroll the console).;
+#X text 210 249 close hid;
+#X text 620 380 open: <float>;
+#X text 621 402 open-vidpid: <float> <float>;
+#X text 620 422 close: none;
+#X text 258 192 open device via VID PID (shown in the console if you
+did "listdevices")., f 38;
+#X connect 0 0 22 0;
+#X connect 1 0 45 0;
+#X connect 2 0 0 0;
+#X connect 4 0 14 0;
+#X connect 4 1 15 0;
+#X connect 4 2 16 0;
+#X connect 4 3 17 0;
+#X connect 4 4 18 0;
+#X connect 4 5 19 0;
+#X connect 4 6 20 0;
+#X connect 4 7 21 0;
+#X connect 13 0 4 0;
+#X connect 13 1 3 0;
+#X connect 14 0 5 0;
 #X connect 15 0 6 0;
-#X connect 15 1 5 0;
 #X connect 16 0 7 0;
 #X connect 17 0 8 0;
 #X connect 18 0 9 0;
@@ -104,12 +105,12 @@ did "listdevices"., f 25;
 #X connect 20 0 11 0;
 #X connect 21 0 12 0;
 #X connect 22 0 13 0;
-#X connect 23 0 14 0;
-#X connect 24 0 15 0;
-#X connect 25 0 24 1;
-#X connect 28 0 27 0;
-#X connect 31 0 27 1;
+#X connect 23 0 22 1;
+#X connect 25 0 24 0;
+#X connect 28 0 24 1;
+#X connect 38 0 0 0;
+#X connect 42 0 0 0;
+#X connect 43 0 24 2;
 #X connect 45 0 0 0;
 #X connect 46 0 0 0;
-#X connect 50 0 0 0;
-#X connect 51 0 27 2;
+#X connect 47 0 0 0;

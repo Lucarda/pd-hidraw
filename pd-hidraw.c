@@ -269,10 +269,10 @@ void hidraw_setup(void) {
 
     //class_setfreefn(hidraw_class, hidraw_cleanup); // I prefer to not do this as it is incompatible with not so old Pds.
     class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
-    class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("openhid"), A_FLOAT, 0);
-    class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("openhid-vidpid"), A_FLOAT, A_FLOAT, 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("open"), A_FLOAT, 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("open-vidpid"), A_FLOAT, A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_poll, gensym("poll"), A_FLOAT, 0);
-    class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("closehid"), 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("close"), 0);
     
     hidraw_pdversion();        
     hid_init();
