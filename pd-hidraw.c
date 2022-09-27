@@ -73,14 +73,16 @@ static void print_device(struct hid_device_info *cur_dev) {
 static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
     
     int i = 0;
+    x->targepath= getbytes(256);
     
     while (cur_dev) {
         post("-----------\nPd device enum: %d", i);
         post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id, 
             cur_dev->product_id);
-        //x->foundVID[i] = cur_dev->vendor_id;
-        //x->foundPID[i] = cur_dev->product_id;
         x->hidpath[i] = cur_dev->path;
+        //printf("prewhat: %s\n", cur_dev->path);
+        printf("prewhat[%d]: %s\n", i, x->hidpath[i]);
+        printf("prewhat[%d]minus1: %s\n", i,  x->hidpath[i-1]);
         i++;
         print_device(cur_dev);
         cur_dev = cur_dev->next;
@@ -101,8 +103,8 @@ static void hidraw_open(t_hidraw *x) {
     // and optionally the Serial number.
     //x->handle = hid_open(x->targetVID, x->targetPID, NULL);
        
-    printf("what: %s",x->targepath);
-    x->handle = hid_open_path(x->targepath);
+    printf("what: %s\n",x->targepath);
+    /*x->handle = hid_open_path(x->targepath);
     
     if (!x->handle) {
         post("hidraw: unable to open device: %ls\n", hid_error(x->handle));
@@ -118,16 +120,17 @@ static void hidraw_open(t_hidraw *x) {
     // Set up buffers.
     memset(x->readbuf,0x00,sizeof(x->readbuf));
     memset(x->readbuf_past,0x00,sizeof(x->readbuf_past));
-
+*/
 }
 
 static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
     
     unsigned short pdenum = (unsigned short) hidn;
     //x->targetVID = x->foundVID[pdenum];
-    //x->targetPID = x->foundPID[pdenum];
-        
-    x->targepath = x->hidpath[pdenum];
+    //x->targetPID = x->foundPID[pdenum];    
+    x->targepath = x->hidpath[(int)hidn];
+    
+    //memcpy(x->targepath, x->hidpath[(int)hidn], 1000);
     hidraw_open(x); 
 }
 
