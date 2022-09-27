@@ -37,15 +37,15 @@
 typedef struct _hidraw {
     t_object  x_obj;
     struct hid_device_info *devs;
-    //unsigned short foundPID[MAXHIDS];
-    //unsigned short foundVID[MAXHIDS];
     unsigned short targetPID;
     unsigned short targetVID;
     unsigned char readbuf[256];
     unsigned char readbuf_past[256];
-    char *hidpath[MAXHIDS];
-    char *targepath;
+    const char *hidpath[MAXHIDS];
+    const char *targepath;
     int readlen;
+    char devlistdone;
+    int ndevices;
     t_float polltime;
     hid_device *handle;
     t_canvas  *x_canvas;
@@ -73,16 +73,13 @@ static void print_device(struct hid_device_info *cur_dev) {
 static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
     
     int i = 0;
-    x->targepath= getbytes(256);
     
     while (cur_dev) {
         post("-----------\nPd device enum: %d", i);
         post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id, 
             cur_dev->product_id);
         x->hidpath[i] = cur_dev->path;
-        //printf("prewhat: %s\n", cur_dev->path);
-        printf("prewhat[%d]: %s\n", i, x->hidpath[i]);
-        printf("prewhat[%d]minus1: %s\n", i,  x->hidpath[i-1]);
+        x->ndevices = i;
         i++;
         print_device(cur_dev);
         cur_dev = cur_dev->next;
@@ -91,20 +88,29 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
 
 
 
-static void hidraw_open(t_hidraw *x) {
+static void hidraw_open(t_hidraw *x, int openmode) {
     
     if (x->handle){
         hid_close(x->handle);
         x->handle = NULL;
         post("hidraw: closing previously opened device ...");
-    } 
-    
+    }
+
+    if (openmode) {        
     // Open the device using the VID, PID,
     // and optionally the Serial number.
-    //x->handle = hid_open(x->targetVID, x->targetPID, NULL);
-       
-    printf("what: %s\n",x->targepath);
-    /*x->handle = hid_open_path(x->targepath);
+    x->handle = hid_open(x->targetVID, x->targetPID, NULL);
+    } else {
+        // Open the device using the path
+        if (x->devlistdone) {
+            printf("what: %s\n", x->targepath);
+            x->handle = hid_open_path(x->targepath);
+        } else {
+            post("hidraw: devices not listed yet.");
+            return;
+        }
+                 
+    }
     
     if (!x->handle) {
         post("hidraw: unable to open device: %ls\n", hid_error(x->handle));
@@ -120,25 +126,25 @@ static void hidraw_open(t_hidraw *x) {
     // Set up buffers.
     memset(x->readbuf,0x00,sizeof(x->readbuf));
     memset(x->readbuf_past,0x00,sizeof(x->readbuf_past));
-*/
+ 
 }
 
 static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
     
-    unsigned short pdenum = (unsigned short) hidn;
-    //x->targetVID = x->foundVID[pdenum];
-    //x->targetPID = x->foundPID[pdenum];    
-    x->targepath = x->hidpath[(int)hidn];
-    
-    //memcpy(x->targepath, x->hidpath[(int)hidn], 1000);
-    hidraw_open(x); 
+    if ((int)hidn > x->ndevices) {
+        post("hidraw: device out range. current count of devices is: %d", x->ndevices);
+    } else {
+        x->targepath = x->hidpath[(int)hidn];
+        printf("pre: %s\n", x->hidpath[(int)hidn]);
+        hidraw_open(x, 0);
+    }    
 }
 
 static void hidraw_opendevice_vidpid(t_hidraw *x, t_float vid, t_float pid) {
 
     x->targetVID = (unsigned short) vid;
     x->targetPID = (unsigned short) pid;
-    hidraw_open(x); 
+    hidraw_open(x, 1); 
 }
 
 static void hidraw_closedevice(t_hidraw *x) {
@@ -155,6 +161,8 @@ static void hidraw_listhids(t_hidraw *x) {
     x->devs = hid_enumerate(0x0, 0x0);
     print_devices(x->devs, x);
     hid_free_enumeration(x->devs);
+    x->devlistdone = 1;
+    post("ndevices: %d", x->ndevices);
 }
 
 static char hidraw_change(t_hidraw *x) {
@@ -262,10 +270,11 @@ static void *hidraw_new(void)
   
     x->bytes_out = outlet_new(&x->x_obj, &s_list);
     x->readstatus = outlet_new(&x->x_obj, &s_float);
-  
-    //x->foundVID[0] = 0;
-    //x->foundPID[0] = 0;
+
+    x->ndevices = 0;
+    x->devlistdone = 0;
     x->handle = NULL;
+    x->targepath = getbytes(256);
 
     return (void *)x;
 }
