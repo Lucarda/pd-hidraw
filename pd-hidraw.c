@@ -134,7 +134,8 @@ static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
     if ((int)hidn > x->ndevices) {
         post("hidraw: device out range. current count of devices is: %d", x->ndevices);
     } else {
-        x->targepath = x->hidpath[(int)hidn];
+        strcpy(x->targepath, x->hidpath[(int)hidn]);
+        //x->targepath = x->hidpath[(int)hidn];
         printf("pre: %s\n", x->hidpath[(int)hidn]);
         hidraw_open(x, 0);
     }    
