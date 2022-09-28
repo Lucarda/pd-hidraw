@@ -72,7 +72,7 @@ static void print_device(struct hid_device_info *cur_dev) {
 
 static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
     
-    int i = 0;
+    int i = 1; // start enumeration from 1 to use 0 as closedevice()
     
     while (cur_dev) {
         post("-----------\nPd device enum: %d", i);
@@ -123,14 +123,26 @@ static void hidraw_open(t_hidraw *x, char openmode) {
  
 }
 
+static void hidraw_closedevice(t_hidraw *x) {
+
+    if (x->handle){
+        hid_close(x->handle);
+        x->handle = NULL;
+        post("hidraw: device closed");
+    }   
+}
+
 static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
     
     int n = (int)hidn;
-    if (!x->devlistdone) {
+    
+    if (n == 0) {
+        hidraw_closedevice(x);
+        return;
+    } else if (!x->devlistdone) {
         post("hidraw: devices not listed yet.");
         return;
-    }
-    else if (n > x->ndevices) {
+    } else if (n > x->ndevices) {
         post("hidraw: device out range. current count of devices is: %d", x->ndevices);
         return;
     } else {
@@ -144,15 +156,6 @@ static void hidraw_opendevice_vidpid(t_hidraw *x, t_float vid, t_float pid) {
     x->targetVID = (unsigned short) vid;
     x->targetPID = (unsigned short) pid;
     hidraw_open(x, 1); 
-}
-
-static void hidraw_closedevice(t_hidraw *x) {
-
-    if (x->handle){
-        hid_close(x->handle);
-        x->handle = NULL;
-        post("hidraw: device closed");
-    }   
 }
 
 static void hidraw_listhids(t_hidraw *x) {

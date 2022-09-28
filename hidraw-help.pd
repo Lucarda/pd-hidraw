@@ -1,8 +1,8 @@
 #N canvas 268 35 884 642 12;
 #X obj 82 408 hidraw;
-#X obj 93 141 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#X obj 93 119 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
-#X msg 32 80 listdevices;
+#X msg 32 58 listdevices;
 #X listbox 115 493 57 0 0 0 - - - 0;
 #X obj 68 533 unpack 0 0 0 0 0 0 0 0, f 55;
 #X floatatom 68 594 5 0 0 0 - - - 0;
@@ -64,32 +64,35 @@ Other HIDs (like "gamepads" or "joystcks") should work out of the box.
 #X text 585 470 outlets:;
 #X text 579 332 inlet:;
 #X text 617 359 listdevices: none;
-#X msg 242 367 poll 0;
-#X text 267 335 poll every <n> milliseconds;
-#X text 305 367 0 to stop polling;
+#X msg 337 345 poll 0;
+#X text 331 313 poll every <n> milliseconds;
+#X text 400 345 0 to stop polling;
 #X text 620 440 poll: <float>;
-#X msg 202 333 poll 5;
+#X msg 266 311 poll 5;
 #X obj 742 177 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X text 761 176 Windows;
-#X msg 93 162 open \$1;
-#X msg 183 297 close;
-#X msg 123 237 open-vidpid 2064 1;
-#X text 132 80 <-- first this. it will give the "Pd device enum" to
+#X msg 93 163 open \$1;
+#X msg 227 269 close;
+#X msg 130 207 open-vidpid 2064 1;
+#X text 132 58 <-- first this. it will give the "Pd device enum" to
 use with "open" \, (scroll the console).;
-#X text 239 299 close hid;
 #X text 620 380 open: <float>;
 #X text 621 402 open-vidpid: <float> <float>;
 #X text 620 422 close: none;
-#X text 223 134 this opens the corresponding "path" to the "Pd device
+#X text 223 112 this opens the corresponding "path" to the "Pd device
 enum". Note the you have to do "listdevices" to fill the internal enumeration.
 , f 43;
-#X text 267 209 open device via VID PID (shown in the console if you
+#X text 274 179 open device via VID PID (shown in the console if you
 did "listdevices"). Note that the VID PID is hard-coded in the device
 and this can be used without a prior "listdevices" message., f 44
 ;
+#X floatatom 93 140 5 0 0 0 - - - 0;
+#X msg 145 269 open 0;
+#X text 283 271 close hid;
+#X text 200 268 or;
 #X connect 0 0 22 0;
-#X connect 1 0 45 0;
+#X connect 1 0 54 0;
 #X connect 2 0 0 0;
 #X connect 4 0 14 0;
 #X connect 4 1 15 0;
@@ -119,3 +122,5 @@ and this can be used without a prior "listdevices" message., f 44
 #X connect 45 0 0 0;
 #X connect 46 0 0 0;
 #X connect 47 0 0 0;
+#X connect 54 0 45 0;
+#X connect 55 0 0 0;
