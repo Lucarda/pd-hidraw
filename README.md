@@ -13,6 +13,6 @@ to build on Linux first get the `libudev-dev` pkg for your distro (here shown fo
 
 	sudo apt install libudev-dev
 	
-then (MinGW, xcode or GCC)
+then on Linux(GCC), macOS(Xcode) or Windows(MinGW):
 
 	make
