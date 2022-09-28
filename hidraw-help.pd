@@ -1,6 +1,6 @@
 #N canvas 268 35 884 642 12;
-#X obj 83 386 hidraw;
-#X obj 78 125 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#X obj 82 408 hidraw;
+#X obj 93 141 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
 #X msg 32 80 listdevices;
 #X listbox 115 493 57 0 0 0 - - - 0;
@@ -13,7 +13,7 @@
 #X floatatom 338 596 5 0 0 0 - - - 0;
 #X floatatom 395 596 5 0 0 0 - - - 0;
 #X floatatom 448 597 5 0 0 0 - - - 0;
-#X obj 83 457 route 0 1;
+#X obj 83 467 route 0 1;
 #X obj 68 562 change;
 #X obj 121 562 change;
 #X obj 178 562 change;
@@ -22,8 +22,8 @@
 #X obj 338 562 change;
 #X obj 395 562 change;
 #X obj 448 562 change;
-#X obj 83 427 list prepend 0;
-#X obj 178 400 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#X obj 83 437 list prepend 0;
+#X obj 178 410 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #N canvas 156 156 563 451 hid-permissions 0;
 #X obj 63 61 inlet;
@@ -64,25 +64,30 @@ Other HIDs (like "gamepads" or "joystcks") should work out of the box.
 #X text 585 470 outlets:;
 #X text 579 332 inlet:;
 #X text 617 359 listdevices: none;
-#X msg 217 332 poll 0;
-#X text 249 292 poll every <n> milliseconds;
-#X text 280 332 0 to stop polling;
+#X msg 242 367 poll 0;
+#X text 267 335 poll every <n> milliseconds;
+#X text 305 367 0 to stop polling;
 #X text 620 440 poll: <float>;
-#X msg 184 290 poll 5;
+#X msg 202 333 poll 5;
 #X obj 742 177 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X text 761 176 Windows;
-#X msg 78 146 open \$1;
-#X msg 154 247 close;
-#X msg 115 191 open-vidpid 2064 1;
+#X msg 93 162 open \$1;
+#X msg 183 297 close;
+#X msg 123 237 open-vidpid 2064 1;
 #X text 132 80 <-- first this. it will give the "Pd device enum" to
 use with "open" \, (scroll the console).;
-#X text 210 249 close hid;
+#X text 239 299 close hid;
 #X text 620 380 open: <float>;
 #X text 621 402 open-vidpid: <float> <float>;
 #X text 620 422 close: none;
-#X text 258 192 open device via VID PID (shown in the console if you
-did "listdevices")., f 38;
+#X text 223 134 this opens the corresponding "path" to the "Pd device
+enum". Note the you have to do "listdevices" to fill the internal enumeration.
+, f 43;
+#X text 267 209 open device via VID PID (shown in the console if you
+did "listdevices"). Note that the VID PID is hard-coded in the device
+and this can be used without a prior "listdevices" message., f 44
+;
 #X connect 0 0 22 0;
 #X connect 1 0 45 0;
 #X connect 2 0 0 0;
