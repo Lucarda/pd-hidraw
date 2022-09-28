@@ -41,8 +41,8 @@ typedef struct _hidraw {
     unsigned short targetVID;
     unsigned char readbuf[256];
     unsigned char readbuf_past[256];
-    const char *hidpath[MAXHIDS];
-    const char *targepath;
+    char *hidpath[MAXHIDS];
+    char *targepath;
     int readlen;
     char devlistdone;
     int ndevices;
@@ -78,7 +78,8 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
         post("-----------\nPd device enum: %d", i);
         post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id, 
             cur_dev->product_id);
-        x->hidpath[i] = cur_dev->path;
+        x->hidpath[i] = getbytes(strlen(cur_dev->path));
+        strcpy((char *)x->hidpath[i], cur_dev->path);
         x->ndevices = i;
         i++;
         print_device(cur_dev);
@@ -88,7 +89,7 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
 
 
 
-static void hidraw_open(t_hidraw *x, int openmode) {
+static void hidraw_open(t_hidraw *x, char openmode) {
     
     if (x->handle){
         hid_close(x->handle);
@@ -97,19 +98,12 @@ static void hidraw_open(t_hidraw *x, int openmode) {
     }
 
     if (openmode) {        
-    // Open the device using the VID, PID,
-    // and optionally the Serial number.
-    x->handle = hid_open(x->targetVID, x->targetPID, NULL);
+        // Open the device using the VID, PID,
+        // and optionally the Serial number.
+        x->handle = hid_open(x->targetVID, x->targetPID, NULL);
     } else {
         // Open the device using the path
-        if (x->devlistdone) {
-            printf("what: %s\n", x->targepath);
-            x->handle = hid_open_path(x->targepath);
-        } else {
-            post("hidraw: devices not listed yet.");
-            return;
-        }
-                 
+        x->handle = hid_open_path(x->targepath);            
     }
     
     if (!x->handle) {
@@ -131,12 +125,16 @@ static void hidraw_open(t_hidraw *x, int openmode) {
 
 static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
     
-    if ((int)hidn > x->ndevices) {
+    int n = (int)hidn;
+    if (!x->devlistdone) {
+        post("hidraw: devices not listed yet.");
+        return;
+    }
+    else if (n > x->ndevices) {
         post("hidraw: device out range. current count of devices is: %d", x->ndevices);
+        return;
     } else {
-        strcpy(x->targepath, x->hidpath[(int)hidn]);
-        //x->targepath = x->hidpath[(int)hidn];
-        printf("pre: %s\n", x->hidpath[(int)hidn]);
+        x->targepath = (char *)x->hidpath[n];
         hidraw_open(x, 0);
     }    
 }
@@ -163,7 +161,6 @@ static void hidraw_listhids(t_hidraw *x) {
     print_devices(x->devs, x);
     hid_free_enumeration(x->devs);
     x->devlistdone = 1;
-    post("ndevices: %d", x->ndevices);
 }
 
 static char hidraw_change(t_hidraw *x) {
