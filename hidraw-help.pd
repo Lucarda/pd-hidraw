@@ -73,7 +73,7 @@ Other HIDs (like "gamepads" or "joystcks") should work out of the box.
 #000000 #000000;
 #X text 761 176 Windows;
 #X msg 93 163 open \$1;
-#X msg 227 269 close;
+#X msg 240 270 close;
 #X msg 130 207 open-vidpid 2064 1;
 #X text 132 58 <-- first this. it will give the "Pd device enum" to
 use with "open" \, (scroll the console).;
@@ -83,16 +83,16 @@ use with "open" \, (scroll the console).;
 #X text 223 112 this opens the corresponding "path" to the "Pd device
 enum". Note the you have to do "listdevices" to fill the internal enumeration.
 , f 43;
+#X floatatom 93 140 5 0 0 0 - - - 0;
+#X msg 158 270 open 0;
+#X text 296 272 close hid;
+#X text 213 269 or;
 #X text 274 179 open device via VID PID (shown in the console if you
 did "listdevices"). Note that the VID PID is hard-coded in the device
-and this can be used without a prior "listdevices" message., f 44
-;
-#X floatatom 93 140 5 0 0 0 - - - 0;
-#X msg 145 269 open 0;
-#X text 283 271 close hid;
-#X text 200 268 or;
+and this can be used (later) without a prior "listdevices" message.
+, f 44;
 #X connect 0 0 22 0;
-#X connect 1 0 54 0;
+#X connect 1 0 53 0;
 #X connect 2 0 0 0;
 #X connect 4 0 14 0;
 #X connect 4 1 15 0;
@@ -122,5 +122,5 @@ and this can be used without a prior "listdevices" message., f 44
 #X connect 45 0 0 0;
 #X connect 46 0 0 0;
 #X connect 47 0 0 0;
-#X connect 54 0 45 0;
-#X connect 55 0 0 0;
+#X connect 53 0 45 0;
+#X connect 54 0 0 0;
