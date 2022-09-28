@@ -42,7 +42,7 @@ typedef struct _hidraw {
     unsigned char readbuf[256];
     unsigned char readbuf_past[256];
     char *hidpath[MAXHIDS];
-    char *targepath;
+    char *targetpath;
     int readlen;
     char devlistdone;
     int ndevices;
@@ -103,7 +103,7 @@ static void hidraw_open(t_hidraw *x, char openmode) {
         x->handle = hid_open(x->targetVID, x->targetPID, NULL);
     } else {
         // Open the device using the path
-        x->handle = hid_open_path(x->targepath);            
+        x->handle = hid_open_path(x->targetpath);            
     }
     
     if (!x->handle) {
@@ -146,7 +146,7 @@ static void hidraw_opendevice(t_hidraw *x, t_float hidn) {
         post("hidraw: device out range. current count of devices is: %d", x->ndevices);
         return;
     } else {
-        x->targepath = (char *)x->hidpath[n];
+        x->targetpath = (char *)x->hidpath[n];
         hidraw_open(x, 0);
     }    
 }
@@ -275,7 +275,7 @@ static void *hidraw_new(void)
     x->ndevices = 0;
     x->devlistdone = 0;
     x->handle = NULL;
-    x->targepath = getbytes(256);
+    x->targetpath = getbytes(256);
 
     return (void *)x;
 }
