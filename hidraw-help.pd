@@ -80,9 +80,6 @@ use with "open" \, (scroll the console).;
 #X text 620 380 open: <float>;
 #X text 621 402 open-vidpid: <float> <float>;
 #X text 620 422 close: none;
-#X text 223 112 this opens the corresponding "path" to the "Pd device
-enum". Note the you have to do "listdevices" to fill the internal enumeration.
-, f 43;
 #X floatatom 93 140 5 0 0 0 - - - 0;
 #X msg 158 270 open 0;
 #X text 296 272 close hid;
@@ -91,8 +88,11 @@ enum". Note the you have to do "listdevices" to fill the internal enumeration.
 did "listdevices"). Note that the VID PID is hard-coded in the device
 and this can be used (later) without a prior "listdevices" message.
 , f 44;
+#X text 223 112 this opens the corresponding "path" to the "Pd device
+enum". Note that you have to do "listdevices" to fill the internal
+enumeration., f 43;
 #X connect 0 0 22 0;
-#X connect 1 0 53 0;
+#X connect 1 0 52 0;
 #X connect 2 0 0 0;
 #X connect 4 0 14 0;
 #X connect 4 1 15 0;
@@ -122,5 +122,5 @@ and this can be used (later) without a prior "listdevices" message.
 #X connect 45 0 0 0;
 #X connect 46 0 0 0;
 #X connect 47 0 0 0;
-#X connect 53 0 45 0;
-#X connect 54 0 0 0;
+#X connect 52 0 45 0;
+#X connect 53 0 0 0;
