@@ -235,7 +235,7 @@ static void hidraw_tick(t_hidraw *x) {
 static void hidraw_pdversion(void) {
     
     post("---");
-    post("  hidraw v%d.%d.%d", HIDRAW_MAJOR_VERSION, HIDRAW_MINOR_VERSION, HIDRAW_BUGFIX_VERSION);
+    post("  hidraw v%d.%d.%d (pre-release 1)", HIDRAW_MAJOR_VERSION, HIDRAW_MINOR_VERSION, HIDRAW_BUGFIX_VERSION);
     post("  hidapi v%d.%d.%d", HID_API_VERSION_MAJOR, HID_API_VERSION_MINOR, HID_API_VERSION_PATCH);
     post("---");
 }
