@@ -31,6 +31,7 @@ endef
 datafiles = \
 	README.md \
 	hidraw-help.pd \
+    CHANGELOG.txt \
 	${empty}
 
 

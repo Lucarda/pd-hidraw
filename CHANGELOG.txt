@@ -1,0 +1,5 @@
+Changelog for pd-hidraw
+
+
+v0.1.0, dated 05-10-2025
+Initial version.
