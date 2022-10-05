@@ -78,7 +78,7 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
         post("-----------\nPd device enum: %d", i);
         post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id, 
             cur_dev->product_id);
-        x->hidpath[i] = getbytes(strlen(cur_dev->path));
+        x->hidpath[i] = getbytes(strlen(cur_dev->path)+1);
         strcpy((char *)x->hidpath[i], cur_dev->path);
         x->ndevices = i;
         i++;
