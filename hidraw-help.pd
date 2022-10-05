@@ -1,29 +1,29 @@
-#N canvas 268 35 884 642 12;
-#X obj 82 408 hidraw;
-#X obj 93 119 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
+#N canvas 190 29 895 670 12;
+#X obj 82 430 hidraw;
+#X obj 93 161 hradio 15 1 0 8 empty empty empty 0 -8 0 10 #fcfcfc #000000
 #000000 0;
-#X msg 32 58 listdevices;
-#X listbox 115 493 57 0 0 0 - - - 0;
-#X obj 68 533 unpack 0 0 0 0 0 0 0 0, f 55;
-#X floatatom 68 594 5 0 0 0 - - - 0;
-#X floatatom 121 595 5 0 0 0 - - - 0;
-#X floatatom 178 595 5 0 0 0 - - - 0;
-#X floatatom 231 596 5 0 0 0 - - - 0;
-#X floatatom 285 596 5 0 0 0 - - - 0;
-#X floatatom 338 596 5 0 0 0 - - - 0;
-#X floatatom 395 596 5 0 0 0 - - - 0;
-#X floatatom 448 597 5 0 0 0 - - - 0;
-#X obj 83 467 route 0 1;
-#X obj 68 562 change;
-#X obj 121 562 change;
-#X obj 178 562 change;
-#X obj 231 562 change;
-#X obj 285 562 change;
-#X obj 338 562 change;
-#X obj 395 562 change;
-#X obj 448 562 change;
-#X obj 83 437 list prepend 0;
-#X obj 178 410 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
+#X msg 32 100 listdevices;
+#X listbox 115 515 57 0 0 0 - - - 0;
+#X obj 68 555 unpack 0 0 0 0 0 0 0 0, f 55;
+#X floatatom 68 616 5 0 0 0 - - - 0;
+#X floatatom 121 617 5 0 0 0 - - - 0;
+#X floatatom 178 617 5 0 0 0 - - - 0;
+#X floatatom 231 618 5 0 0 0 - - - 0;
+#X floatatom 285 618 5 0 0 0 - - - 0;
+#X floatatom 338 618 5 0 0 0 - - - 0;
+#X floatatom 395 618 5 0 0 0 - - - 0;
+#X floatatom 448 619 5 0 0 0 - - - 0;
+#X obj 83 489 route 0 1;
+#X obj 68 584 change;
+#X obj 121 584 change;
+#X obj 178 584 change;
+#X obj 231 584 change;
+#X obj 285 584 change;
+#X obj 338 584 change;
+#X obj 395 584 change;
+#X obj 448 584 change;
+#X obj 83 459 list prepend 0;
+#X obj 178 432 hradio 15 1 0 2 empty empty empty 0 -8 0 10 #fcfcfc
 #000000 #000000 0;
 #N canvas 156 156 563 451 hid-permissions 0;
 #X obj 63 61 inlet;
@@ -37,17 +37,21 @@
 #X text 80 129 On Windows [hidraw] can't read from "mouses" or "keyboards".
 Other HIDs (like "gamepads" or "joystcks") should work out of the box.
 , f 66;
-#X restore 365 241 pd hidrawonwindows;
+#X restore 256 368 pd hidrawonwindows;
 #X f 19;
 #X obj 270 54 inlet;
-#X msg 261 269 vis 1;
-#X obj 255 334 s pd-hidrawonwindows;
+#X msg 257 314 vis 1;
+#X obj 255 343 s pd-hidrawonwindows;
+#X msg 137 258 browse https://github.com/Lucarda/pd-hidraw;
+#X obj 143 227 r github;
 #X connect 0 0 2 0;
 #X connect 2 0 1 0;
 #X connect 3 0 1 0;
 #X connect 4 0 3 0;
 #X connect 6 0 7 0;
 #X connect 7 0 8 0;
+#X connect 9 0 1 0;
+#X connect 10 0 9 0;
 #X restore 619 212 pd hid-permissions;
 #X obj 619 131 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
@@ -55,7 +59,6 @@ Other HIDs (like "gamepads" or "joystcks") should work out of the box.
 #X text 637 130 Linux;
 #X obj 680 155 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
-#X text 44 21 [hidraw] reads raw bytes from HIDs.;
 #X text 629 494 1st: <list> raw bytes;
 #X text 628 520 2nd: <float>;
 #X text 659 541 -1 = read error;
@@ -63,36 +66,42 @@ Other HIDs (like "gamepads" or "joystcks") should work out of the box.
 #X text 665 576 2 = read Ok;
 #X text 585 470 outlets:;
 #X text 579 332 inlet:;
-#X text 617 359 listdevices: none;
-#X msg 337 345 poll 0;
-#X text 331 313 poll every <n> milliseconds;
-#X text 400 345 0 to stop polling;
-#X text 620 440 poll: <float>;
-#X msg 266 311 poll 5;
+#X msg 337 387 poll 0;
+#X text 331 355 poll every <n> milliseconds;
+#X text 400 387 0 to stop polling;
+#X msg 266 353 poll 5;
 #X obj 742 177 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc
 #000000 #000000;
 #X text 761 176 Windows;
-#X msg 93 163 open \$1;
-#X msg 240 270 close;
-#X msg 130 207 open-vidpid 2064 1;
-#X text 132 58 <-- first this. it will give the "Pd device enum" to
+#X msg 93 205 open \$1;
+#X msg 240 312 close;
+#X msg 130 249 open-vidpid 2064 1;
+#X text 132 100 <-- first this. it will give the "Pd device enum" to
 use with "open" \, (scroll the console).;
-#X text 620 380 open: <float>;
-#X text 621 402 open-vidpid: <float> <float>;
-#X text 620 422 close: none;
-#X floatatom 93 140 5 0 0 0 - - - 0;
-#X msg 158 270 open 0;
-#X text 296 272 close hid;
-#X text 213 269 or;
-#X text 274 179 open device via VID PID (shown in the console if you
+#X floatatom 93 182 5 0 0 0 - - - 0;
+#X msg 158 312 open 0;
+#X text 296 314 close hid;
+#X text 213 311 or;
+#X text 274 221 open device via VID PID (shown in the console if you
 did "listdevices"). Note that the VID PID is hard-coded in the device
 and this can be used (later) without a prior "listdevices" message.
 , f 44;
-#X text 223 112 this opens the corresponding "path" to the "Pd device
+#X text 223 154 this opens the corresponding "path" to the "Pd device
 enum". Note that you have to do "listdevices" to fill the internal
 enumeration., f 43;
+#X obj 175 33 cnv 10 300 6 empty empty hidraw 0 0 0 28 #dfdfdf #404040
+0;
+#X text 305 39 read raw bytes from HIDs;
+#X obj 836 627 bng 15 250 50 0 github empty empty 17 7 0 10 #ffffff
+#000000 #000000;
+#X text 726 625 github repo -->;
+#X text 617 359 listdevices;
+#X text 620 380 open <float>;
+#X text 621 402 open-vidpid <float> <float>;
+#X text 620 422 close;
+#X text 620 440 poll <float>;
 #X connect 0 0 22 0;
-#X connect 1 0 52 0;
+#X connect 1 0 46 0;
 #X connect 2 0 0 0;
 #X connect 4 0 14 0;
 #X connect 4 1 15 0;
@@ -116,11 +125,11 @@ enumeration., f 43;
 #X connect 23 0 22 1;
 #X connect 25 0 24 0;
 #X connect 28 0 24 1;
-#X connect 38 0 0 0;
+#X connect 36 0 0 0;
+#X connect 39 0 0 0;
+#X connect 40 0 24 2;
 #X connect 42 0 0 0;
-#X connect 43 0 24 2;
-#X connect 45 0 0 0;
-#X connect 46 0 0 0;
+#X connect 43 0 0 0;
+#X connect 44 0 0 0;
+#X connect 46 0 42 0;
 #X connect 47 0 0 0;
-#X connect 52 0 45 0;
-#X connect 53 0 0 0;
