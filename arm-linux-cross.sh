@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # this script builds arm versions of hidraw. 
-# to be used on a Debian buster live cd/usb
+# run this script on a Debian buster live cd/usb
 
 sudo apt update
 sudo apt install g++-arm-linux-gnueabihf g++-aarch64-linux-gnu -y
