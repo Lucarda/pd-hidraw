@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# this script build arm versions of hidraw. 
+# this script builds arm versions of hidraw. 
 # to be used on a Debian buster live cd/usb
 
 sudo apt update
