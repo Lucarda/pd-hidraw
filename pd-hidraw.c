@@ -282,7 +282,11 @@ static void *hidraw_new(void)
 
 
 
-
+#if defined(_WIN32)
+__declspec(dllexport)
+#else
+__attribute__((visibility("default")))
+#endif
 void hidraw_setup(void) {
 
     hidraw_class = class_new(gensym("hidraw"),
