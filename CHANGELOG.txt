@@ -1,5 +1,8 @@
 Changelog for pd-hidraw
 
+v0.1.1, dated 17-04-2024
+- remove internal change detection
+- update hidapi submodule 
 
 v0.1.0, dated 02-11-2022
 Initial version.
