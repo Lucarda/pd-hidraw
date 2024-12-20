@@ -20,8 +20,8 @@ After cloning the pd-hidraw repository, initialize the submodules via:
 ### without git
 
 If you obtained the 'pd-hidraw' sources without git (e.g. by downloading a release tarball), 
-there won't be any bundled hidapi. Instead, you can manually download hidapi from
-https://github.com/libusb/hidapi and put it into the main folder.
+there won't be any bundled hidapi and pd-lib-builder. Instead, you can manually download hidapi from
+https://github.com/libusb/hidapi and put it into the main folder. Also the same for pd-lib-builder from https://github.com/pure-data/pd-lib-builder
 
 ### compiling
 
