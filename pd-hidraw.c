@@ -29,8 +29,8 @@
 #endif
 
 #define HIDRAW_MAJOR_VERSION 0
-#define HIDRAW_MINOR_VERSION 1
-#define HIDRAW_BUGFIX_VERSION 1
+#define HIDRAW_MINOR_VERSION 2
+#define HIDRAW_BUGFIX_VERSION 0
 
 #define MAXHIDS 50
 
@@ -40,7 +40,6 @@ typedef struct _hidraw {
     unsigned short targetPID;
     unsigned short targetVID;
     unsigned char readbuf[256];
-    unsigned char readbuf_past[256];
     char *hidpath[MAXHIDS];
     char *targetpath;
     int readlen;
@@ -49,15 +48,62 @@ typedef struct _hidraw {
     t_float polltime;
     hid_device *handle;
     t_canvas  *x_canvas;
-    t_outlet *bytes_out, *readstatus;
+    t_outlet *bytes_out, *readstatus, *info;
     t_clock *hidclock;
 
-  } t_hidraw;
+} t_hidraw;
 
 
 t_class *hidraw_class;
 
+// convert wide-char to char
+void wchar2char(char *buf, wchar_t *wchar, int n) {
+    int i;
+    for (i=0; i<n; i++)
+    {
+        buf[i] = (char)wchar[i]; 
+    }
 
+}
+
+static void hidraw_outlet_info(struct hid_device_info *cur_dev, t_hidraw *x) {
+    
+    t_atom devs[6];
+        
+    int n_man, n_prod, n_serial;
+    char *manufacturer, *product, *serial;
+
+    n_man = wcslen(cur_dev->manufacturer_string);    
+    manufacturer = getbytes(n_man);
+    wchar2char(manufacturer, cur_dev->manufacturer_string, n_man);
+
+    n_prod = wcslen(cur_dev->product_string);    
+    product = getbytes(n_prod);
+    wchar2char(product,cur_dev->product_string, n_prod);
+
+    n_serial = wcslen(cur_dev->product_string);    
+    serial = getbytes(n_serial);
+    wchar2char( serial, cur_dev->serial_number, n_serial);    
+    
+   
+    SETSYMBOL(devs+0, gensym(manufacturer));
+    SETSYMBOL(devs+1, gensym(product));
+    if (!strlen(serial)) SETSYMBOL (devs+2, gensym("no-serial-number"));
+    else SETSYMBOL(devs+2, gensym(serial));
+    
+    
+    SETFLOAT(devs+3, (t_float)cur_dev->vendor_id);
+    SETFLOAT(devs+4, (t_float)cur_dev->product_id);
+
+    SETSYMBOL(devs+5, gensym(cur_dev->path));  
+    
+    outlet_list(x->info, 0, 6, devs);
+    
+    freebytes(manufacturer, n_man);
+    freebytes(product, n_prod);
+    freebytes(serial, n_serial);
+    
+}
 
 
 static void print_device(struct hid_device_info *cur_dev) {
@@ -78,12 +124,13 @@ static void print_devices(struct hid_device_info *cur_dev, t_hidraw *x) {
         post("-----------\nPd device enum: %d", i);
         post("device VID PID (shown in decimal notation): %d %d", cur_dev->vendor_id,
             cur_dev->product_id);
-        x->hidpath[i] = getbytes(strlen(cur_dev->path)+1);
+        x->hidpath[i] = getbytes(strlen(cur_dev->path));
         strcpy((char *)x->hidpath[i], cur_dev->path);
         x->ndevices = i;
-        i++;
         print_device(cur_dev);
+        hidraw_outlet_info(cur_dev, x);
         cur_dev = cur_dev->next;
+        i++;
     }
 }
 
@@ -117,9 +164,8 @@ static void hidraw_open(t_hidraw *x, char openmode) {
     // Set the hid_read() function to be non-blocking.
     hid_set_nonblocking(x->handle, 1);
 
-    // Set up buffers.
+    // Set up buffer.
     memset(x->readbuf,0x00,sizeof(x->readbuf));
-    memset(x->readbuf_past,0x00,sizeof(x->readbuf_past));
 
 }
 
@@ -158,12 +204,25 @@ static void hidraw_opendevice_vidpid(t_hidraw *x, t_float vid, t_float pid) {
     hidraw_open(x, 1);
 }
 
+static void hidraw_opendevice_path(t_hidraw *x, t_symbol *path) {
+
+    x->targetpath = (char *)path->s_name;
+    hidraw_open(x, 0);
+}
+
 static void hidraw_listhids(t_hidraw *x) {
 
     x->devs = hid_enumerate(0x0, 0x0);
     print_devices(x->devs, x);
     hid_free_enumeration(x->devs);
     x->devlistdone = 1;
+}
+
+static void hidraw_listvidpid(t_hidraw *x, t_float vid, t_float pid) {
+
+    x->devs = hid_enumerate((unsigned short)vid, (unsigned short)pid);
+    print_devices(x->devs, x);
+    hid_free_enumeration(x->devs);
 }
 
 static void hidraw_poll(t_hidraw *x, t_float f ) {
@@ -247,6 +306,7 @@ static void *hidraw_new(void)
 
     x->bytes_out = outlet_new(&x->x_obj, &s_list);
     x->readstatus = outlet_new(&x->x_obj, &s_float);
+    x->info = outlet_new(&x->x_obj, &s_list);
 
     x->ndevices = 0;
     x->devlistdone = 0;
@@ -275,8 +335,10 @@ void hidraw_setup(void) {
 
     //class_setfreefn(hidraw_class, hidraw_cleanup); // I prefer to not do this as it is incompatible with not so old Pds.
     class_addmethod(hidraw_class, (t_method)hidraw_listhids, gensym("listdevices"), 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_listvidpid, gensym("list-vidpid"), A_FLOAT, A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice, gensym("open"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_opendevice_vidpid, gensym("open-vidpid"), A_FLOAT, A_FLOAT, 0);
+    class_addmethod(hidraw_class, (t_method)hidraw_opendevice_path, gensym("open-path"), A_SYMBOL, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_poll, gensym("poll"), A_FLOAT, 0);
     class_addmethod(hidraw_class, (t_method)hidraw_closedevice, gensym("close"), 0);
 
