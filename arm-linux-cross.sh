@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # this script builds arm versions of hidraw. 
-# run this script on a Debian buster live cd/usb
+# run this script on a Debian11 live cd/usb
 
-SRC="PDDIR=/home/user/Downloads/pure-data-master/"
+SRC="PDDIR=/home/user/Downloads/pure-data-master"
 OUT="PDLIBDIR=./out"
 
 sudo apt update
@@ -20,6 +20,7 @@ make clean
 sudo apt install build-essential binutils -y
 sudo apt install gcc-multilib -y
 sudo dpkg --add-architecture i386
+sudo apt update
 sudo apt install libudev-dev libudev-dev:i386 -y
 make CFLAGS=-m32 LDFLAGS=-m32 $SRC $OUT extension=l_i386 install
 make clean
