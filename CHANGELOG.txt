@@ -1,5 +1,11 @@
 Changelog for pd-hidraw
 
+v0.2.0, dated 27-12-2024
+- add optional 3th outlet via creation arg "-info" that outputs devices listing as a Pd list
+- add methods "open-path" and "list-vidpid"
+- update pd-lib-builder submodule
+- update hidapi submodule 
+
 v0.1.1, dated 17-04-2024
 - remove internal change detection
 - update hidapi submodule 
