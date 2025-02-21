@@ -40,7 +40,7 @@ typedef struct _hidraw {
     unsigned short targetPID;
     unsigned short targetVID;
     unsigned char readbuf[256];
-    char *hidpath[MAXHIDS];
+    char hidpath[MAXHIDS][256];
     char *targetpath;
     int readlen;
     char devlistdone;
@@ -129,7 +129,7 @@ static void list_devices(struct hid_device_info *cur_dev, t_hidraw *x)
     int i = 1; // start enumeration from 1 to use 0 as closedevice()
 
     while (cur_dev) {
-        x->hidpath[i] = getbytes(strlen(cur_dev->path));
+        //x->hidpath[i] = getbytes(strlen(cur_dev->path));
         strcpy((char *)x->hidpath[i], cur_dev->path);
         x->ndevices = i;
         if (x->infomode != 1) print_device(cur_dev, i);
@@ -277,13 +277,8 @@ static void hidraw_pdversion(void)
 
 static void hidraw_free(t_hidraw *x)
 {
-    int i;
     if (x->handle) hid_close(x->handle);
     clock_free(x->hidclock);
-    for (i=0; i<MAXHIDS; i++)
-    {        
-        freebytes(x->hidpath[i], 0);
-    }
     freebytes(x->targetpath, 0);
 }
 
