@@ -71,42 +71,37 @@ jobs:
 # ===============================================================
 # ===============================================================
 # ===============================================================
-
-# unfortunately arm bulids fails when doing "sudo apt update" and files 
-# are not found in servers so we can't get "sudo apt install libudev-dev:<arch>"
-
-
-#  Linux-arm-Builds:
-#    runs-on: ubuntu-22.04
-#    steps:
-#    - uses: actions/checkout@v4
-#    - name: Checkout submodules
-#      run: git submodule update --init --recursive
-#    - name: Install arm-mutiarch
-#      run: |
-#        sudo apt install g++-arm-linux-gnueabihf g++-aarch64-linux-gnu -y
-#        sudo dpkg --add-architecture armhf
-#        sudo dpkg --add-architecture arm64
-#        sudo apt update
-#        sudo apt install libudev-dev:armhf -y
-#        sudo apt install libudev-dev:arm64 -y
-
-#    - name: Download pd-Sources 
-#      run: | 
-#        git clone https://github.com/pure-data/pure-data.git
-#        cd pure-data
-#        git checkout tags/$PD_VERSION
-# 
-#    - name: Build 
-#      run: | 
-#        make CC=arm-linux-gnueabihf-gcc PDDIR=./pure-data/ PDLIBDIR=./out extension=l_arm install
-#        make CC=aarch64-linux-gnu-gcc PDDIR=./pure-data/ PDLIBDIR=./out extension=l_arm64 install
-#    
-#    - name: Upload Zip
-#      uses: actions/upload-artifact@v4
-#      with:
-#        name: pd-hidraw-linux-arm-mutiarch
-#        path: ./out/*
+  Linux-arm-Builds:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+    - name: Install arm-mutiarch
+      run: |
+        sudo apt-get update
+        sudo apt-get install g++-arm-linux-gnueabihf g++-aarch64-linux-gnu -y
+        sudo dpkg --add-architecture armhf
+        sudo dpkg --add-architecture arm64
+        sudo apt-get update
+        sudo apt-get install libudev-dev:armhf -y
+        sudo apt-get install libudev-dev:arm64 -y
+    - name: Download pd-Sources 
+      run: | 
+        git clone https://github.com/pure-data/pure-data.git
+        cd pure-data
+        git checkout tags/$PD_VERSION
+ 
+    - name: Build 
+      run: | 
+        make CC=arm-linux-gnueabihf-gcc PDDIR=./pure-data/ PDLIBDIR=./out extension=l_arm install
+        make CC=aarch64-linux-gnu-gcc PDDIR=./pure-data/ PDLIBDIR=./out extension=l_arm64 install
+    
+    - name: Upload Zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: pd-hidraw-linux-arm-mutiarch
+        path: ./out/*
 
 # # # # ===============================================================
 # # # # ===============================================================
