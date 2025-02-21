@@ -1,5 +1,8 @@
 Changelog for pd-hidraw
 
+v0.2.1, dated 21-02-2025
+- fix crasher on free function
+
 v0.2.0, dated 27-12-2024
 - add optional 3th outlet via creation arg "-info" that outputs devices listing as a Pd list
 - add methods "open-path" and "list-vidpid"
