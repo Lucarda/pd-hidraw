@@ -47,15 +47,6 @@ typedef struct _hidraw {
 
 t_class *hidraw_class;
 
-// convert wide-char to char
-static void wchar2char(char *buf, wchar_t *wchar, int n)
-{
-    int i;
-    for (i=0; i<n; i++)
-    {
-        buf[i] = (char)wchar[i];
-    }
-}
 
 static void hidraw_outlet_info(struct hid_device_info *cur_dev, t_hidraw *x)
 {
@@ -67,15 +58,15 @@ static void hidraw_outlet_info(struct hid_device_info *cur_dev, t_hidraw *x)
 
     n_man = wcslen(cur_dev->manufacturer_string);
     manufacturer = getbytes(n_man);
-    wchar2char(manufacturer, cur_dev->manufacturer_string, n_man);
+    wcstombs(manufacturer, cur_dev->manufacturer_string, n_man);
 
     n_prod = wcslen(cur_dev->product_string);
     product = getbytes(n_prod);
-    wchar2char(product,cur_dev->product_string, n_prod);
+    wcstombs(product,cur_dev->product_string, n_prod);
 
     n_serial = wcslen(cur_dev->serial_number);
     serial = getbytes(n_serial);
-    wchar2char(serial, cur_dev->serial_number, n_serial);
+    wcstombs(serial, cur_dev->serial_number, n_serial);
 
     if (strlen(manufacturer) == 0) SETSYMBOL (devs+0, gensym(empty));
     else SETSYMBOL(devs+0, gensym(manufacturer));
