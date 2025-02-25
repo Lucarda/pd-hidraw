@@ -10,15 +10,6 @@
 #include "m_pd.h"
 #include <hidapi.h>
 
-
-// Headers needed for sleeping.
-#ifdef _WIN32
-    #include <windows.h>
-#else
-    #include <unistd.h>
-#endif
-
-
 // Sample using platform-specific headers
 #if defined(__APPLE__)
 #include <hidapi_darwin.h>
@@ -30,7 +21,7 @@
 
 #define HIDRAW_MAJOR_VERSION 0
 #define HIDRAW_MINOR_VERSION 2
-#define HIDRAW_BUGFIX_VERSION 0
+#define HIDRAW_BUGFIX_VERSION 2
 
 #define MAXHIDS 50
 
@@ -41,7 +32,7 @@ typedef struct _hidraw {
     unsigned short targetVID;
     unsigned char readbuf[256];
     char hidpath[MAXHIDS][256];
-    char *targetpath;
+    char targetpath[256];
     int readlen;
     char devlistdone;
     int ndevices;
@@ -196,7 +187,7 @@ static void hidraw_opendevice(t_hidraw *x, t_float hidn)
         post("hidraw: device out range. current count of devices is: %d", x->ndevices);
         return;
     } else {
-        x->targetpath = (char *)x->hidpath[n];
+        strcpy(x->targetpath,x->hidpath[n]);
         hidraw_open(x, 0);
     }
 }
@@ -210,7 +201,7 @@ static void hidraw_opendevice_vidpid(t_hidraw *x, t_float vid, t_float pid)
 
 static void hidraw_opendevice_path(t_hidraw *x, t_symbol *path)
 {
-    x->targetpath = (char *)path->s_name;
+    strcpy(x->targetpath,path->s_name);
     hidraw_open(x, 0);
 }
 
@@ -279,7 +270,6 @@ static void hidraw_free(t_hidraw *x)
 {
     if (x->handle) hid_close(x->handle);
     clock_free(x->hidclock);
-    freebytes(x->targetpath, 0);
 }
 
 
@@ -314,7 +304,6 @@ static void *hidraw_new(t_symbol *s, int argc, t_atom *argv)
     x->ndevices = 0;
     x->devlistdone = 0;
     x->handle = NULL;
-    x->targetpath = getbytes(256);
     return (void *)x;
 }
 
