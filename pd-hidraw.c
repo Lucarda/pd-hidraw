@@ -1,5 +1,5 @@
 /* pd-hidraw.c
- * By Lucas Cordiviola <lucarda27@hotmail.com> 2022-2024
+ * By Lucas Cordiviola <lucarda27@hotmail.com> 2022-2025
 */
 
 #include <stdio.h>
@@ -111,7 +111,6 @@ static void list_devices(struct hid_device_info *cur_dev, t_hidraw *x)
     int i = 1; // start enumeration from 1 to use 0 as closedevice()
 
     while (cur_dev) {
-        //x->hidpath[i] = getbytes(strlen(cur_dev->path));
         strcpy((char *)x->hidpath[i], cur_dev->path);
         x->ndevices = i;
         if (x->infomode != 1) print_device(cur_dev, i);
@@ -128,7 +127,7 @@ static void hidraw_open(t_hidraw *x, char openmode)
     if (x->handle){
         hid_close(x->handle);
         x->handle = NULL;
-        post("hidraw: closing previously opened device ...");
+        logpost(x, PD_NORMAL, "hidraw: closing previously opened device ...");
     }
 
     if (openmode) {
@@ -141,12 +140,12 @@ static void hidraw_open(t_hidraw *x, char openmode)
     }
 
     if (!x->handle) {
-        post("hidraw: unable to open device: %ls\n", hid_error(x->handle));
+        logpost(x, PD_ERROR, "hidraw: unable to open device: %ls\n", hid_error(x->handle));
         x->handle = NULL;
         return;
     }
 
-    post("hidraw: successfully opened the device");
+    logpost(x, PD_NORMAL, "hidraw: successfully opened the device");
 
     // Set the hid_read() function to be non-blocking.
     hid_set_nonblocking(x->handle, 1);
@@ -160,7 +159,7 @@ static void hidraw_closedevice(t_hidraw *x)
     if (x->handle){
         hid_close(x->handle);
         x->handle = NULL;
-        post("hidraw: device closed");
+        logpost(x, PD_NORMAL, "hidraw: device closed");
     }
 }
 
@@ -172,10 +171,10 @@ static void hidraw_opendevice(t_hidraw *x, t_float hidn)
         hidraw_closedevice(x);
         return;
     } else if (!x->devlistdone) {
-        post("hidraw: devices not listed yet.");
+        logpost(x, PD_ERROR, "hidraw: devices not listed yet.");
         return;
     } else if (n > x->ndevices) {
-        post("hidraw: device out range. current count of devices is: %d", x->ndevices);
+        logpost(x, PD_ERROR, "hidraw: device out range. current count of devices is: %d", x->ndevices);
         return;
     } else {
         strcpy(x->targetpath,x->hidpath[n]);
@@ -221,7 +220,7 @@ static void hidraw_tick(t_hidraw *x)
     t_atom out[256];
 
     if (!x->handle){
-        post("hidraw: no device opened yet");
+        logpost(x, PD_ERROR, "hidraw: no device opened yet");
         return;
     }
 
@@ -229,7 +228,7 @@ static void hidraw_tick(t_hidraw *x)
     x->readlen = hid_read(x->handle, x->readbuf, sizeof(x->readbuf));
 
     if (x->readlen < 0) {
-        post("hidraw: unable to read(): %ls\n", hid_error(x->handle));
+        logpost(x, PD_ERROR, "hidraw: unable to read(): %ls\n", hid_error(x->handle));
         outlet_float(x->readstatus, -1);
         goto polling;
     }
