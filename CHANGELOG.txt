@@ -1,5 +1,8 @@
 Changelog for pd-hidraw
 
+v0.2.2, dated 26-02-2025
+- more bugfixes
+
 v0.2.1, dated 21-02-2025
 - fix crasher on free function
 
